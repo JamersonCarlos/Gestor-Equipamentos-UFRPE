@@ -1,16 +1,82 @@
-# gestor_uso_projetores_ufrpe
+# Gestor de Uso de Projetores - UFRPE
 
-A new Flutter project.
+Sistema de gerenciamento de empréstimo e devolução de projetores da Universidade Federal Rural de Pernambuco (UFRPE).
 
-## Getting Started
+## 📋 Descrição
 
-This project is a starting point for a Flutter application.
+Este projeto é um aplicativo móvel desenvolvido em Flutter para gerenciar o controle de entrada e saída de projetores na UFRPE. O sistema permite o registro, monitoramento e controle do uso dos equipamentos audiovisuais da instituição.
 
-A few resources to get you started if this is your first Flutter project:
+## layout Idealizado
+![layout](./layout.png)
+---
+## 🚀 Funcionalidades Principais
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Cadastro de projetores
+- Registro de empréstimos
+- Controle de devoluções
+- Histórico de utilização
+- Gestão de usuários
+- Relatórios de uso
+- Notificações de devolução
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Tecnologias Utilizadas
+
+- Flutter
+- Dart
+- Provider (para gerenciamento de estado)
+
+## 📱 Requisitos do Sistema
+
+- Flutter SDK (versão 3.0.0 ou superior)
+- Dart SDK (versão 2.17.0 ou superior)
+- Android Studio / VS Code
+- Dispositivo Chrome/Navegadores para testes
+
+## 🔧 Instalação
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/JamersonCarlos/gestor_uso_projetores_ufrpe.git
+```
+
+2. Entre no diretório do projeto:
+```bash
+cd gestor_uso_projetores_ufrpe
+```
+
+3. Instale as dependências:
+```bash
+flutter pub get
+```
+
+4. Execute o aplicativo:
+```bash
+flutter run
+```
+
+## 📦 Estrutura do Projeto
+
+```
+lib/
+  ├── models/       # Classes de modelo
+  ├── views/        # Telas do aplicativo
+  ├── controllers/  # Lógica de negócios
+  ├── services/     # Serviços e APIs
+  ├── utils/        # Utilitários e helpers
+  └── main.dart     # Ponto de entrada do aplicativo
+```
+
+## 👥 Contribuição
+
+1. Faça um Fork do projeto
+2. Crie uma Branch para sua Feature (`git checkout -b feature/AmazingFeature`)
+3. Faça o Commit das suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Faça o Push para a Branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+
+## 🙏 Agradecimentos
+
+- UFRPE
+- Equipe de Desenvolvimento
+- Todos os contribuidores
