@@ -6,11 +6,25 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 16,
+      spacing: 18,
       runSpacing: 16,
+      alignment: WrapAlignment.center,
       children: const [
-        StatCard(title: 'Total Loans', value: '96', icon: null),
-        StatCard(title: 'Most Active Day', value: 'Wednesday', icon: Icons.calendar_month),
+        StatCard(
+          title: 'Total Loans',
+          value: '96',
+          icon: Icons.account_tree_rounded,
+        ),
+        StatCard(
+          title: 'Most Active Day',
+          value: 'Wednesday',
+          icon: Icons.calendar_month,
+        ),
+        StatCard(
+          title: 'Most Active Teacher',
+          value: 'Michael Johnson',
+          icon: Icons.person,
+        ),
         StatCard(
           title: 'Most Active Teacher',
           value: 'Michael Johnson',
@@ -36,7 +50,7 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 250,
+      width: MediaQuery.of(context).size.width * 0.21,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
