@@ -58,12 +58,24 @@ flutter run
 
 ```
 lib/
-  ├── models/       # Classes de modelo
-  ├── views/        # Telas do aplicativo
-  ├── controllers/  # Lógica de negócios
-  ├── services/     # Serviços e APIs
-  ├── utils/        # Utilitários e helpers
-  └── main.dart     # Ponto de entrada do aplicativo
+  ├── core/
+  │     ├── theme/         # Temas e cores do app
+  │     ├── routes/        # Rotas e navegação
+  │     ├── utils/         # Utilitários gerais
+  │     └── constants/     # Constantes globais
+  ├── data/
+  │     ├── repositories/  # Implementações dos repositórios
+  │     └── datasources/   # Fontes de dados (APIs, local, etc)
+  ├── domain/
+  │     ├── entities/      # Entidades do domínio
+  │     └── repositories/  # Contratos dos repositórios
+  ├── presentation/
+  │     ├── layouts/       # Layouts principais (Sidebar, TopBar, etc)
+  │     ├── screens/       # Telas do aplicativo
+  │     ├── widgets/       # Componentes reutilizáveis
+  │     └── providers/     # Gerenciamento de estado
+  ├── config/              # Configurações globais do app
+  └── main.dart            # Ponto de entrada do aplicativo
 ```
 
 ## 👥 Contribuição
