@@ -12,7 +12,7 @@ class ProjectorLoanTable extends StatelessWidget {
         'avatar': 'https://randomuser.me/api/portraits/men/32.jpg',
         'function': 'Manager',
         'subtitle': 'Organization',
-        'status': 'ONLINE',
+        'status': 'ALOCADO',
         'statusColor': Color(0xFF2ECC71),
         'date': '23/04/18',
         'id': 'PRJ001',
@@ -25,7 +25,7 @@ class ProjectorLoanTable extends StatelessWidget {
         'avatar': 'https://randomuser.me/api/portraits/women/44.jpg',
         'function': 'Programator',
         'subtitle': 'Developer',
-        'status': 'OFFLINE',
+        'status': 'DEVOLVIDO',
         'statusColor': Color(0xFF6C757D),
         'date': '11/01/19',
         'id': 'PRJ002',
@@ -38,7 +38,7 @@ class ProjectorLoanTable extends StatelessWidget {
         'avatar': 'https://randomuser.me/api/portraits/men/43.jpg',
         'function': 'Executive',
         'subtitle': 'Projects',
-        'status': 'ONLINE',
+        'status': 'ALOCADO',
         'statusColor': Color(0xFF2ECC71),
         'date': '19/09/17',
         'id': 'PRJ003',
@@ -51,7 +51,7 @@ class ProjectorLoanTable extends StatelessWidget {
         'avatar': 'https://randomuser.me/api/portraits/women/65.jpg',
         'function': 'Programtor',
         'subtitle': 'Developer',
-        'status': 'ONLINE',
+        'status': 'ALOCADO',
         'statusColor': Color(0xFF2ECC71),
         'date': '14/09/20',
         'id': 'PRJ004',
@@ -69,7 +69,7 @@ class ProjectorLoanTable extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Authors table',
+              'Historico de locação',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
@@ -79,11 +79,11 @@ class ProjectorLoanTable extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Expanded(
                     child: Text(
-                      'AUTHOR',
+                      'Autor',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1,
@@ -93,7 +93,7 @@ class ProjectorLoanTable extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'FUNCTION',
+                      'Funcionario',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1,
@@ -101,18 +101,16 @@ class ProjectorLoanTable extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 90,
-                    child: Center(
-                      child: Text(
-                        'ID',
+                  Expanded(
+                   child:  Text(
+                        'Objeto Alocado',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                           color: Colors.black54,
                         ),
                       ),
-                    ),
+              
                   ),
                   Expanded(
                     child: Text(
@@ -136,7 +134,7 @@ class ProjectorLoanTable extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'STATUS',
+                      'Status',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1,
@@ -159,6 +157,7 @@ class ProjectorLoanTable extends StatelessWidget {
                   children: [
                     // Avatar, nome e email
                     Expanded(
+                      flex:6,
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -193,6 +192,7 @@ class ProjectorLoanTable extends StatelessWidget {
                     ),
                     // Função e subtítulo
                     Expanded(
+                      flex: 6,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -215,21 +215,20 @@ class ProjectorLoanTable extends StatelessWidget {
                       ),
                     ),
                     // ID do projetor (centralizado e largura fixa)
-                    SizedBox(
-                      width: 90,
-                      child: Center(
-                        child: Text(
+                    Expanded(
+                      flex: 6,
+                      child: Text(
                           e['id'].toString(),
                           style: const TextStyle(
                             fontSize: 15,
                             color: Colors.black87,
                             fontWeight: FontWeight.w600,
                           ),
-                        ),
                       ),
                     ),
                     // Check-Out
                     Expanded(
+                      flex: 6,
                       child: Text(
                         e['out'].toString(),
                         style: const TextStyle(
@@ -240,6 +239,7 @@ class ProjectorLoanTable extends StatelessWidget {
                     ),
                     // Check-In
                     Expanded(
+                      flex: 6,
                       child: Text(
                         e['in'].toString(),
                         style: const TextStyle(
@@ -250,6 +250,7 @@ class ProjectorLoanTable extends StatelessWidget {
                     ),
                     // Status badge
                     Expanded(
+                      flex: 6,
                       child: Row(
                         children: [
                           Container(

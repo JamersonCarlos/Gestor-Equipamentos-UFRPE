@@ -5,11 +5,11 @@ class DashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
+    return const Wrap(
       spacing: 18,
       runSpacing: 16,
       alignment: WrapAlignment.center,
-      children: const [
+      children: [
         StatCard(
           title: 'Total Loans',
           value: '96',
