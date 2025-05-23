@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:gestor_uso_projetores_ufrpe/widgets/charts_weeken.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/screens/dashboard/widgets/charts_weeken.dart';
 
 class ChartsSection extends StatelessWidget {
   const ChartsSection({super.key});
