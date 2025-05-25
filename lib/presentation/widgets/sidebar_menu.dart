@@ -21,24 +21,57 @@ class SidebarMenu extends StatelessWidget {
         children: [
           // Logo
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Icon(Icons.video_camera_front,
-                    color: Colors.blue[700], size: 32),
-                const SizedBox(width: 8),
-                Text(
-                  'Projetores UFRPE',
-                  style: TextStyle(
+                Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
                     color: Colors.blue[700],
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    letterSpacing: 1.2,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(10),
+                    
                   ),
+                  child: const Icon(
+                    Icons.widgets_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Inventário',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1976D2),
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'UFRPE',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
+          ),
+          const Divider(
+            color: Color(0xFFE0E0E0),
+            height: 1,
+            thickness: 1,
+            indent: 16,
+            endIndent: 16,
           ),
           // Menu principal
           Expanded(
