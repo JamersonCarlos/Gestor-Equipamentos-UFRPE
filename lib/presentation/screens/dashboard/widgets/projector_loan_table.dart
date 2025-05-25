@@ -1,64 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
+import 'package:provider/provider.dart';
 
-class ProjectorLoanTable extends StatelessWidget {
+class ProjectorLoanTable extends StatefulWidget {
   const ProjectorLoanTable({super.key});
 
   @override
+  State<ProjectorLoanTable> createState() => _ProjectorLoanTableState();
+}
+
+class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
+  @override
   Widget build(BuildContext context) {
-    final entries = [
-      {
-        'name': 'John Michael',
-        'email': 'john@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/men/32.jpg',
-        'function': 'Manager',
-        'subtitle': 'Organization',
-        'status': 'ALOCADO',
-        'statusColor': Color(0xFF2ECC71),
-        'date': '23/04/18',
-        'id': 'PRJ001',
-        'out': '4/16/2024 14:36',
-        'in': '4/17/2024 9:00',
-      },
-      {
-        'name': 'Alexa Liras',
-        'email': 'alexa@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/women/44.jpg',
-        'function': 'Programator',
-        'subtitle': 'Developer',
-        'status': 'DEVOLVIDO',
-        'statusColor': Color(0xFF6C757D),
-        'date': '11/01/19',
-        'id': 'PRJ002',
-        'out': '4/14/2024 00:30',
-        'in': '4/14/2024 10:45',
-      },
-      {
-        'name': 'Laurent Perrier',
-        'email': 'laurent@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/men/43.jpg',
-        'function': 'Executive',
-        'subtitle': 'Projects',
-        'status': 'ALOCADO',
-        'statusColor': Color(0xFF2ECC71),
-        'date': '19/09/17',
-        'id': 'PRJ003',
-        'out': '4/14/2024 11:00',
-        'in': '4/15/2024 16:30',
-      },
-      {
-        'name': 'Miriam Eric',
-        'email': 'miriam@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/women/65.jpg',
-        'function': 'Programtor',
-        'subtitle': 'Developer',
-        'status': 'ALOCADO',
-        'statusColor': Color(0xFF2ECC71),
-        'date': '14/09/20',
-        'id': 'PRJ004',
-        'out': '4/15/2024 14:35',
-        'in': '4/15/2024 16:35',
-      },
-    ];
+    final provider = context.read<ProjectorProvider>();
+    final entries = provider.entries;
 
     return Card(
       elevation: 2,
@@ -102,15 +57,14 @@ class ProjectorLoanTable extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                   child:  Text(
-                        'Objeto Alocado',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          color: Colors.black54,
-                        ),
+                    child: Text(
+                      'Objeto Alocado',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        color: Colors.black54,
                       ),
-              
+                    ),
                   ),
                   Expanded(
                     child: Text(
@@ -157,7 +111,7 @@ class ProjectorLoanTable extends StatelessWidget {
                   children: [
                     // Avatar, nome e email
                     Expanded(
-                      flex:6,
+                      flex: 6,
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -218,12 +172,12 @@ class ProjectorLoanTable extends StatelessWidget {
                     Expanded(
                       flex: 6,
                       child: Text(
-                          e['id'].toString(),
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        e['id'].toString(),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     // Check-Out
