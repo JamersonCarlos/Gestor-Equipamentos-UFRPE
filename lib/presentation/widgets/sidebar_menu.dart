@@ -22,7 +22,7 @@ class SidebarMenu extends StatelessWidget {
           // Logo
           Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+                const EdgeInsets.symmetric(vertical: 30.0, horizontal: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
