@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'core/routes/app_router.dart';
-import 'presentation/providers/projector_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,16 +12,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProjectorProvider()),
-      ],
-      child: MaterialApp.router(
-        title: 'Gestor de Projetores UFRPE',
-        theme: AppTheme.lightTheme,
-        routerConfig: goRouter,
-        debugShowCheckedModeBanner: false,
-      ),
+    return MaterialApp.router(
+      title: 'Gestor de Projetores UFRPE',
+      theme: AppTheme.lightTheme,
+      routerConfig: goRouter,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
