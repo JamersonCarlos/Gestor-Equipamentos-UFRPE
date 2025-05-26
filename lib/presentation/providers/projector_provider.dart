@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/projector.dart';
+import '../../domain/entities/projetor.dart';
 
 class ProjectorProvider extends ChangeNotifier {
-  List<Projector> _projectors = [];
+  List<Projetor> _projectors = [];
   bool _isLoading = false;
   String? _error;
   final _entries = [
@@ -60,7 +60,7 @@ class ProjectorProvider extends ChangeNotifier {
       },
     ];
 
-  List<Projector> get projectors => _projectors;
+  List<Projetor> get projectors => _projectors;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -75,19 +75,14 @@ class ProjectorProvider extends ChangeNotifier {
 
       await Future.delayed(const Duration(seconds: 1)); // Simulação de delay
       _projectors = [
-        Projector(
-          id: '1',
-          model: 'Epson PowerLite',
-          serialNumber: 'SN001',
-          isAvailable: true,
+        Projetor(
+          codigo_tag: "",
+          codigo_tombamento: "232",
+          cor: "preto", 
+          marca: "LG",
+          modelo: "1234",
         ),
-        Projector(
-          id: '2',
-          model: 'BenQ MW632ST',
-          serialNumber: 'SN002',
-          isAvailable: false,
-          currentLocation: 'Departamento de Informática',
-        ),
+        
       ];
     } catch (e) {
       _error = 'Erro ao carregar projetores: $e';
@@ -97,7 +92,7 @@ class ProjectorProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addProjector(Projector projector) async {
+  Future<void> addProjector(Projetor projector) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -114,7 +109,7 @@ class ProjectorProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateProjector(Projector projector) async {
+  Future<void> updateProjector(Projetor projector) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -122,7 +117,7 @@ class ProjectorProvider extends ChangeNotifier {
     try {
       // TODO: Implementar chamada ao repositório
       await Future.delayed(const Duration(seconds: 1)); // Simulação de delay
-      final index = _projectors.indexWhere((p) => p.id == projector.id);
+      final index = _projectors.indexWhere((p) => p.codigo_tombamento == projector.codigo_tombamento);
       if (index != -1) {
         _projectors[index] = projector;
       }
@@ -142,7 +137,7 @@ class ProjectorProvider extends ChangeNotifier {
     try {
       // TODO: Implementar chamada ao repositório
       await Future.delayed(const Duration(seconds: 1)); // Simulação de delay
-      _projectors.removeWhere((p) => p.id == id);
+      _projectors.removeWhere((p) => p.codigo_tombamento == id);
     } catch (e) {
       _error = 'Erro ao deletar projetor: $e';
     } finally {
