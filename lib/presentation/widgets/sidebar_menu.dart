@@ -33,7 +33,6 @@ class SidebarMenu extends StatelessWidget {
                     color: Colors.blue[700],
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(10),
-                    
                   ),
                   child: const Icon(
                     Icons.widgets_rounded,
@@ -97,10 +96,10 @@ class SidebarMenu extends StatelessWidget {
                   onTap: () => context.goNamed('teachers'),
                 ),
                 _SidebarMenuItem(
-                  icon: Icons.settings,
-                  label: 'Configurações',
-                  selected: location.startsWith('/settings'),
-                  onTap: () => context.goNamed('settings'),
+                  icon: Icons.credit_card,
+                  label: 'Cartões',
+                  selected: location.startsWith('/cards'),
+                  onTap: () => context.goNamed('cards'),
                 ),
               ],
             ),

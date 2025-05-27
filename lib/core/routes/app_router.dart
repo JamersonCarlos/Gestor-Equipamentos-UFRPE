@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/cards_grid_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../presentation/layouts/main_layout.dart';
 import '../../presentation/screens/dashboard/dashboard_screen.dart';
 import '../../presentation/screens/projectors_screen.dart';
@@ -14,7 +18,13 @@ final goRouter = GoRouter(
   routes: [
     ShellRoute(
       builder: (context, state, child) {
-        return MainLayout(child: child);
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => ProjectorProvider()),
+            ChangeNotifierProvider(create: (context) => CardsProvider()),
+          ],
+          child: MainLayout(child: child),
+        );
       },
       routes: [
         GoRoute(
@@ -36,6 +46,11 @@ final goRouter = GoRouter(
           path: '/settings',
           name: 'settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: '/cards',
+          name: 'cards',
+          builder: (context, state) => const ResponsiveRfidCardGrid(),
         ),
       ],
     ),
