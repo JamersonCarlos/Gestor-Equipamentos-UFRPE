@@ -22,18 +22,18 @@ class CardService {
     }
   }
 
-  Future<void> createFuncionario(Funcionario funcionario) async {
+  Future<void> createCard(dynamic card) async {
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(funcionario.toJson()),
+        body: json.encode(card.toJson()),
       );
       if (response.statusCode != 200 && response.statusCode != 201 && response.statusCode == 400) {
         throw Exception(json.decode(response.body)['detail']);
       }
     } catch (e) {
-      throw Exception('Erro ao criar funcionário: \$e');
+      throw Exception('Erro ao criar cartão: \$e');
     }
   }
 

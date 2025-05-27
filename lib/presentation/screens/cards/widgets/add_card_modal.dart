@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
 import 'package:lottie/lottie.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'dart:convert';
 import 'rfid_card_item.dart';
 
 class AddCardModal extends StatefulWidget {
@@ -20,6 +22,7 @@ class _AddCardModalState extends State<AddCardModal> {
   IconData icon = Icons.shield_outlined;
   Color color = Colors.blue.shade700;
   bool waitingForCard = true;
+  WebSocketChannel? _channel;
 
   final List<Map<String, dynamic>> iconOptions = [
     {'label': 'Geral', 'icon': Icons.shield_outlined},
@@ -36,26 +39,42 @@ class _AddCardModalState extends State<AddCardModal> {
     {'label': 'Roxo', 'color': Colors.purple.shade700},
     {'label': 'Vermelho', 'color': Colors.red.shade700},
   ];
-    @override
+
+  @override
   void initState() {
     super.initState();
-    
+    _channel =
+        WebSocketChannel.connect(Uri.parse('ws://localhost:8000/addcard'));
+    _channel!.stream.listen((message) {
+      try {
+        final data = json.decode(message);
+        if (data is Map &&
+            data['event'] == 'addCard' &&
+            data['cardId'] != null) {
+          setState(() {
+            cardId = data['cardId'];
+            waitingForCard = false;
+          });
+        }
+      } catch (_) {}
+    });
   }
 
   @override
   void dispose() {
+    _channel?.sink.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-      if (waitingForCard) {
+    if (waitingForCard) {
       return AlertDialog(
         title: const Text('Adicionar novo cartão RFID'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-              SizedBox(
+            SizedBox(
               height: 120,
               child: Lottie.asset('assets/animations/scanner_card.json'),
             ),
@@ -64,11 +83,6 @@ class _AddCardModalState extends State<AddCardModal> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => setState(() => waitingForCard = false),
-            child: const Text('proceguir assim mesmo?'),
-          ),
-          const SizedBox(height: 16),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Cancelar'),
@@ -92,9 +106,8 @@ class _AddCardModalState extends State<AddCardModal> {
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'CardId'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Informe o CardId' : null,
-                onSaved: (value) => cardId = value!,
+                initialValue: cardId,
+                enabled: false,
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Nível de acesso'),
