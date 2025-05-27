@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
-import 'package:provider/provider.dart';
+import 'package:lottie/lottie.dart';
 import 'rfid_card_item.dart';
 
 class AddCardModal extends StatefulWidget {
@@ -19,6 +19,7 @@ class _AddCardModalState extends State<AddCardModal> {
   String lastSeen = '';
   IconData icon = Icons.shield_outlined;
   Color color = Colors.blue.shade700;
+  bool waitingForCard = true;
 
   final List<Map<String, dynamic>> iconOptions = [
     {'label': 'Geral', 'icon': Icons.shield_outlined},
@@ -35,9 +36,46 @@ class _AddCardModalState extends State<AddCardModal> {
     {'label': 'Roxo', 'color': Colors.purple.shade700},
     {'label': 'Vermelho', 'color': Colors.red.shade700},
   ];
+    @override
+  void initState() {
+    super.initState();
+    
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+      if (waitingForCard) {
+      return AlertDialog(
+        title: const Text('Adicionar novo cartão RFID'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+              SizedBox(
+              height: 120,
+              child: Lottie.asset('assets/animations/scanner_card.json'),
+            ),
+            const SizedBox(height: 16),
+            const Text('Aguardando leitura do cartão...'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => setState(() => waitingForCard = false),
+            child: const Text('proceguir assim mesmo?'),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      );
+    }
     return AlertDialog(
       title: const Text('Adicionar novo cartão RFID'),
       content: SingleChildScrollView(
