@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
@@ -43,7 +44,9 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             IconButton(
               icon: const Icon(Icons.settings_outlined),
-              onPressed: () {},
+              onPressed: () {
+                context.goNamed('settings');
+              },
               tooltip: 'Configurações',
             ),
             const SizedBox(width: 16),
