@@ -13,6 +13,14 @@ class ResponsiveRfidCardGrid extends StatefulWidget {
 
 class _ResponsiveRfidCardGridState extends State<ResponsiveRfidCardGrid> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<CardsProvider>(context, listen: false).getCards();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cardsProvider = Provider.of<CardsProvider>(context);
     const double maxCardWidth = 390.0;

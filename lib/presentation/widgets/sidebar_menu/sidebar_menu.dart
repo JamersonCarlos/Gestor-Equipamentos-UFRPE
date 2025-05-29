@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/sidebar_menu/widgets/item_menu.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/sidebar_menu/widgets/item_sub_menu.dart';
 import 'package:go_router/go_router.dart';
 
-class SidebarMenu extends StatelessWidget {
+class SidebarMenu extends StatefulWidget {
   final double width;
   const SidebarMenu({super.key, this.width = 260});
+
+  @override
+  State<SidebarMenu> createState() => _SidebarMenuState();
+}
+
+class _SidebarMenuState extends State<SidebarMenu> {
+  bool _isCardsMenuOpen = false;
 
   @override
   Widget build(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     return Container(
-      width: width,
+      width: widget.width,
       height: double.infinity,
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -77,75 +86,56 @@ class SidebarMenu extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
-                _SidebarMenuItem(
+                SidebarMenuItem(
                   icon: Icons.dashboard,
                   label: 'Dashboard',
                   selected: location == '/' || location.startsWith('/?'),
                   onTap: () => context.goNamed('dashboard'),
                 ),
-                _SidebarMenuItem(
+                SidebarMenuItem(
                   icon: Icons.video_camera_front,
                   label: 'Projetores',
                   selected: location.startsWith('/projectors'),
                   onTap: () => context.goNamed('projectors'),
                 ),
-                _SidebarMenuItem(
+                SidebarMenuItem(
                   icon: Icons.people,
                   label: 'Professores',
                   selected: location.startsWith('/teachers'),
                   onTap: () => context.goNamed('teachers'),
                 ),
-                _SidebarMenuItem(
+                SidebarMenuItem(
                   icon: Icons.credit_card,
-                  label: 'Cartões',
-                  selected: location.startsWith('/cards'),
-                  onTap: () => context.goNamed('cards'),
+                  label: 'Cartões RFID',
+                  selected: false,
+                  onTap: () {
+                    setState(() {
+                      _isCardsMenuOpen = !_isCardsMenuOpen;
+                    });
+                  },
+                  hasSubmenu: true,
+                  isSubmenuOpen: _isCardsMenuOpen,
+                  submenuItems: [
+                    SubmenuItem(
+                      label: '- Cartões',
+                      selected: location == '/cards',
+                      onTap: () => context.goNamed('cards'),
+                    ),
+                    SubmenuItem(
+                      label: '- Tags',
+                      selected: location.startsWith('/tags-associateds'),
+                      onTap: () => context.goNamed('tags-associateds'),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          // Espaço para promo/usuário (opcional)
         ],
       ),
     );
   }
 }
 
-class _SidebarMenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  const _SidebarMenuItem({
-    required this.icon,
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-      decoration: selected
-          ? BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(8),
-            )
-          : null,
-      child: ListTile(
-        leading: Icon(icon, color: selected ? Colors.blue : Colors.black54),
-        title: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.blue : Colors.black87,
-            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
-}
+

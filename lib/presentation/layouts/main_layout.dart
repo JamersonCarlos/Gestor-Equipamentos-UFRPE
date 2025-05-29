@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/sidebar_menu.dart';
+import '../widgets/sidebar_menu/sidebar_menu.dart';
 import '../widgets/top_bar.dart';
 
 class MainLayout extends StatelessWidget {
