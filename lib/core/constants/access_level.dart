@@ -5,7 +5,7 @@ enum AccessLevel {
     value: 0,
     label: 'Administrador',
     icon: Icons.admin_panel_settings_outlined,
-    color: Colors.red,
+    color: Colors.indigo,
   ),
   professor(
     value: 1,
