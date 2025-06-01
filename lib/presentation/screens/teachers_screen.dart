@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/cursos.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/funcionario.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cursos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/funcionarios_list.dart';
+import 'package:provider/provider.dart';
 import '../../services/funcionarioService.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
 
 import '../../core/theme/app_colors.dart';
 import 'package:brasil_fields/brasil_fields.dart';
@@ -21,14 +26,13 @@ class _TeachersScreenState extends State<TeachersScreen> {
   final _nomeController = TextEditingController();
   final _cursoIdController = TextEditingController();
   final _funcionarioService = FuncionarioService();
-
+  String? _selectedCartao;
+  String? _selectedCurso;
 
   @override
   void initState() {
     super.initState();
   }
-
-
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
@@ -47,9 +51,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
           ),
         );
         _formKey.currentState!.reset();
-        setState(() {
-          
-        });
+        setState(() {});
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -63,11 +65,12 @@ class _TeachersScreenState extends State<TeachersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cardsProvider = Provider.of<CardsProvider>(context);
+    final cursosProvider = Provider.of<CursosProvider>(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
           Container(
             decoration: const BoxDecoration(
               color: AppColors.background,
@@ -77,10 +80,11 @@ class _TeachersScreenState extends State<TeachersScreen> {
                 elevation: 4,
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 1600),
-                  padding: const EdgeInsets.only(top: 24, bottom: 10, left: 24, right: 24),
+                  padding: const EdgeInsets.only(
+                      top: 24, bottom: 10, left: 24, right: 24),
                   child: Form(
                     key: _formKey,
-                    child: Row(                   
+                    child: Row(
                       children: [
                         Expanded(
                           child: SizedBox(
@@ -116,20 +120,38 @@ class _TeachersScreenState extends State<TeachersScreen> {
                         Expanded(
                           child: SizedBox(
                             height: 80,
-                            child: TextFormField(
-                              controller: _codigoCartaoController,
-                              decoration: _buildInputDecoration(
-                                'Código do Cartão',
-                                'Digite o código do cartão',
-                              ),
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(10),
-                              ],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor, digite o código do cartão';
-                                }
-                                return null;
+                            child: FutureBuilder<List<RfidCardInfo>>(
+                              future: cardsProvider.rfidCards(),
+                              builder: (context, snapshot) {
+                                return DropdownButtonFormField<String>(
+                                  isExpanded: true,
+                                  value: _selectedCartao,
+                                  decoration: _buildInputDecoration(
+                                    'Cartão',
+                                    'Selecione o cartão do professor',
+                                  ),
+                                  items: snapshot.hasData
+                                      ? snapshot.data!.map((RfidCardInfo card) {
+                                          return DropdownMenuItem<String>(
+                                            value: card.cardId,
+                                            child: Text(card.cardId),
+                                          );
+                                        }).toList()
+                                      : [],
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedCartao = newValue;
+                                      _codigoCartaoController.text =
+                                          newValue ?? '';
+                                    });
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Por favor, selecione um cartão';
+                                    }
+                                    return null;
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -158,21 +180,37 @@ class _TeachersScreenState extends State<TeachersScreen> {
                         Expanded(
                           child: SizedBox(
                             height: 80,
-                            child: TextFormField(
-                              controller: _cursoIdController,
-                              decoration: _buildInputDecoration(
-                                'ID do Curso',
-                                'Digite o ID do curso',
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor, digite o ID do curso';
-                                }
-                                return null;
+                            child: FutureBuilder<List<Curso>>(
+                              future: cursosProvider.fetchCursos(),
+                              builder: (context, snapshot) {
+                                return DropdownButtonFormField<String>(
+                                  isExpanded: true,
+                                  value: _selectedCurso,
+                                  decoration: _buildInputDecoration(
+                                    'Curso',
+                                    'Selecione o curso do professor',
+                                  ),
+                                  items: snapshot.hasData
+                                      ? snapshot.data!.map((Curso curso) {
+                                          return DropdownMenuItem<String>(
+                                            value: curso.curso_id.toString(),
+                                            child: Text(curso.nome),
+                                          );
+                                        }).toList()
+                                      : [],
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedCurso = newValue;
+                                      _cursoIdController.text = newValue ?? '';
+                                    });
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Por favor, selecione um cartão';
+                                    }
+                                    return null;
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -188,8 +226,10 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                                  minimumSize: const Size(120, 56), // Altura fixa do botão
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24),
+                                  minimumSize: const Size(
+                                      120, 56), // Altura fixa do botão
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -210,11 +250,11 @@ class _TeachersScreenState extends State<TeachersScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          Expanded(child: FuncionariosList(onListUpdated: () { 
-            setState(() {
-              
-            });
-          },))
+          Expanded(child: FuncionariosList(
+            onListUpdated: () {
+              setState(() {});
+            },
+          ))
         ],
       ),
     );
@@ -247,4 +287,3 @@ InputDecoration _buildInputDecoration(String label, String hint) {
     ),
   );
 }
-
