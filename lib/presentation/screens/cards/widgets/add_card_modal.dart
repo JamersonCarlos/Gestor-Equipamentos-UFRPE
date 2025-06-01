@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/core/constants/access_level.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
 import 'package:lottie/lottie.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -15,30 +16,11 @@ class AddCardModal extends StatefulWidget {
 
 class _AddCardModalState extends State<AddCardModal> {
   final _formKey = GlobalKey<FormState>();
-  String id = '';
   String cardId = '';
-  String accessLevel = '';
-  String lastSeen = '';
-  IconData icon = Icons.shield_outlined;
-  Color color = Colors.blue.shade700;
+  String label = '';
+  AccessLevel accessLevel = AccessLevel.admin;
   bool waitingForCard = true;
   WebSocketChannel? _channel;
-
-  final List<Map<String, dynamic>> iconOptions = [
-    {'label': 'Geral', 'icon': Icons.shield_outlined},
-    {'label': 'Restrito', 'icon': Icons.lock_outline},
-    {'label': 'Admin', 'icon': Icons.admin_panel_settings_outlined},
-    {'label': 'Visitante', 'icon': Icons.person_outline},
-    {'label': 'Bloqueado', 'icon': Icons.block_outlined},
-  ];
-
-  final List<Map<String, dynamic>> colorOptions = [
-    {'label': 'Azul', 'color': Colors.blue.shade700},
-    {'label': 'Laranja', 'color': Colors.orange.shade700},
-    {'label': 'Verde', 'color': Colors.green.shade700},
-    {'label': 'Roxo', 'color': Colors.purple.shade700},
-    {'label': 'Vermelho', 'color': Colors.red.shade700},
-  ];
 
   @override
   void initState() {
@@ -99,69 +81,38 @@ class _AddCardModalState extends State<AddCardModal> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                decoration: const InputDecoration(labelText: 'ID'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Informe o ID' : null,
-                onSaved: (value) => id = value!,
-              ),
-              TextFormField(
                 decoration: const InputDecoration(labelText: 'CardId'),
                 initialValue: cardId,
                 enabled: false,
               ),
               TextFormField(
+                decoration: const InputDecoration(labelText: 'Nome'),
+                initialValue: '',
+                enabled: true,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Informe o nome' : null,
+                onSaved: (value) => label = value!,
+              ),
+              DropdownButtonFormField<AccessLevel>(
+                value: AccessLevel.values.firstWhere(
+                  (e) => e.value == accessLevel,
+                  orElse: () => AccessLevel.admin,
+                ),
                 decoration: const InputDecoration(labelText: 'Nível de acesso'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Informe o nível de acesso'
-                    : null,
-                onSaved: (value) => accessLevel = value!,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Última leitura'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Informe a última leitura'
-                    : null,
-                onSaved: (value) => lastSeen = value!,
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<IconData>(
-                value: icon,
-                decoration: const InputDecoration(labelText: 'Ícone'),
-                items: iconOptions
-                    .map<DropdownMenuItem<IconData>>(
-                        (opt) => DropdownMenuItem<IconData>(
-                              value: opt['icon'] as IconData,
+                items: AccessLevel.values
+                    .map<DropdownMenuItem<AccessLevel>>(
+                        (opt) => DropdownMenuItem<AccessLevel>(
+                              value: opt,
                               child: Row(
                                 children: [
-                                  Icon(opt['icon'] as IconData),
+                                  Icon(opt.icon),
                                   const SizedBox(width: 8),
-                                  Text(opt['label'])
+                                  Text(opt.label)
                                 ],
                               ),
                             ))
                     .toList(),
-                onChanged: (value) => setState(() => icon = value!),
-              ),
-              DropdownButtonFormField<Color>(
-                value: color,
-                decoration: const InputDecoration(labelText: 'Cor'),
-                items: colorOptions
-                    .map<DropdownMenuItem<Color>>(
-                        (opt) => DropdownMenuItem<Color>(
-                              value: opt['color'] as Color,
-                              child: Row(
-                                children: [
-                                  Container(
-                                      width: 18,
-                                      height: 18,
-                                      color: opt['color'] as Color,
-                                      margin: const EdgeInsets.only(right: 8)),
-                                  Text(opt['label'])
-                                ],
-                              ),
-                            ))
-                    .toList(),
-                onChanged: (value) => setState(() => color = value!),
+                onChanged: (value) => setState(() => accessLevel = value!),
               ),
             ],
           ),
@@ -177,12 +128,11 @@ class _AddCardModalState extends State<AddCardModal> {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
               final newCard = RfidCardInfo(
-                id: id,
+                id: '',
                 cardId: cardId,
                 accessLevel: accessLevel,
-                lastSeen: lastSeen,
-                icon: icon,
-                color: color,
+                lastSeen: '',
+                label: accessLevel.label,
               );
               widget.cardsProvider.addCard(newCard);
               Navigator.of(context).pop();

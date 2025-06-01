@@ -17,6 +17,7 @@ class CardsProvider extends ChangeNotifier {
 
   void addCard(RfidCardInfo card) {
     _rfidCards.add(card);
+    _cardService.createCard(card);
     notifyListeners();
   }
 
@@ -33,10 +34,9 @@ class CardsProvider extends ChangeNotifier {
             (json) => RfidCardInfo(
               id: json.id.toString(),
               cardId: json.rfid,
-              accessLevel: json.nivelAcesso.label,
+              accessLevel: json.nivelAcesso,
               lastSeen: json.ultimaEntrada.toString(),
-              icon: json.nivelAcesso.icon,
-              color: json.nivelAcesso.color,
+              label: json.nivelAcesso.label,
             ),
           )
           .toList();

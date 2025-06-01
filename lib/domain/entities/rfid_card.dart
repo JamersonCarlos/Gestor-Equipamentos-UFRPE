@@ -5,7 +5,7 @@ class RfidCard {
   final String rfid;
   final AccessLevel nivelAcesso;
   final String status;
-  final DateTime ultimaEntrada;
+  final DateTime? ultimaEntrada;
   final int id;
 
   RfidCard({
@@ -23,7 +23,9 @@ class RfidCard {
       rfid: json['rfid'] as String,
       nivelAcesso: AccessLevel.fromValue(json['nivel_acesso'] as int),
       status: json['status'] as String,
-      ultimaEntrada: DateTime.parse(json['ultima_entrada'] as String),
+      ultimaEntrada: json['ultima_entrada'] != null
+          ? DateTime.parse(json['ultima_entrada'] as String)
+          : null,
       id: json['id'] as int,
     );
   }
@@ -34,7 +36,7 @@ class RfidCard {
       'rfid': rfid,
       'nivel_acesso': nivelAcesso.value,
       'status': status,
-      'ultima_entrada': ultimaEntrada.toIso8601String(),
+      'ultima_entrada': ultimaEntrada?.toIso8601String(),
       'id': id,
     };
   }

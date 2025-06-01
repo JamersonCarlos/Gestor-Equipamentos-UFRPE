@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/core/constants/access_level.dart';
 
 class RfidCardInfo {
   final String id;
   final String cardId;
-  final String accessLevel;
-  final String lastSeen;
-  final IconData icon;
-  final Color color;
+  final String label;
+  final AccessLevel accessLevel;
+  String? lastSeen;
 
   RfidCardInfo({
     required this.id,
     required this.cardId,
     required this.accessLevel,
-    required this.lastSeen,
-    required this.icon,
-    required this.color,
+    this.lastSeen,
+    required this.label,
   });
 }
 
@@ -35,8 +34,8 @@ class RfidCardItem extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              cardInfo.color.withOpacity(0.92),
-              cardInfo.color.withOpacity(0.7),
+              cardInfo.accessLevel.color.withOpacity(0.92),
+              cardInfo.accessLevel.color.withOpacity(0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -51,7 +50,7 @@ class RfidCardItem extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: [
-                      Icon(cardInfo.icon, color: Colors.white, size: 28),
+                      Icon(cardInfo.accessLevel.icon, color: Colors.white, size: 28),
                       const SizedBox(width: 10),
                       const Expanded(
                         child: Text(
@@ -68,7 +67,7 @@ class RfidCardItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    cardInfo.accessLevel,
+                    cardInfo.accessLevel.label,
                     style: const TextStyle(
                       fontSize: 15,
                       color: Colors.white70,
@@ -107,7 +106,7 @@ class RfidCardItem extends StatelessWidget {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: cardInfo.color,
+                        foregroundColor: cardInfo.accessLevel.color,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

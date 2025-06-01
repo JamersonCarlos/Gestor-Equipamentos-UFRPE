@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
 import 'package:http/http.dart' as http;
 import '../core/config/env.dart';
 import '../domain/entities/rfid_card.dart';
@@ -28,12 +29,17 @@ class CardService {
     }
   }
 
-  Future<void> createCard(RfidCard card) async {
+  Future<void> createCard(RfidCardInfo card) async {
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(card.toJson()),
+        body: json.encode({
+          'rfid': card.cardId,
+          'nome': card.label,
+          'nivel_acesso': card.accessLevel.value,
+          'status': card.accessLevel.label,
+        }),
       );
       if (response.statusCode != 200 &&
           response.statusCode != 201 &&
