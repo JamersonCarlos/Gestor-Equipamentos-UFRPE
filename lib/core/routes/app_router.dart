@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cursos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cargos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/cards_grid_screen.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/tags/tags_associateds_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +26,7 @@ final goRouter = GoRouter(
             ChangeNotifierProvider(create: (context) => ProjectorProvider()),
             ChangeNotifierProvider(create: (context) => CardsProvider()),
             ChangeNotifierProvider(create: (context) => CursosProvider()),
+            ChangeNotifierProvider(create: (context) => CargosProvider()),
           ],
           child: MainLayout(child: child),
         );

@@ -24,10 +24,10 @@ class _FuncionariosListState extends State<FuncionariosList> {
   Future<void> _updateFuncionario(Funcionario funcionario, String novoCodigoCartao) async {
     try {
       final funcionarioAtualizado = Funcionario(
-        nome: funcionario.nome,
-        cpf: funcionario.cpf,
+        email: funcionario.email,
         codigo_cartao: novoCodigoCartao, 
         curso_id: funcionario.curso_id,
+        cargo_id: funcionario.cargo_id,
       );
 
       await _funcionarioService.updateFuncionario(funcionarioAtualizado);
@@ -54,7 +54,7 @@ class _FuncionariosListState extends State<FuncionariosList> {
 
   Future<void> _deleteFuncionario(Funcionario funcionario) async {
     try {
-      await _funcionarioService.deleteFuncionario(funcionario.cpf);
+      await _funcionarioService.deleteFuncionario(funcionario.email);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Professor removido com sucesso!'),
@@ -106,7 +106,7 @@ class _FuncionariosListState extends State<FuncionariosList> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              funcionario.nome,
+                              funcionario.email,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -114,7 +114,7 @@ class _FuncionariosListState extends State<FuncionariosList> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'CPF: ${funcionario.cpf}',
+                              'Código do cartão: ${funcionario.codigo_cartao}',
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 14,

@@ -19,7 +19,6 @@ class CursosProvider extends ChangeNotifier {
       _cursos = await _cursosService.getCursos();
     }
     _isLoading = false;
-    notifyListeners();
     return _cursos;
 
   }

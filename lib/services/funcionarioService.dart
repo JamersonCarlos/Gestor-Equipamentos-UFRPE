@@ -56,7 +56,7 @@ class FuncionarioService {
   Future<void> updateFuncionario(Funcionario funcionario) async {
     try {
       final response = await http.put(
-        Uri.parse('$_baseUrl${funcionario.cpf}'),
+        Uri.parse('$_baseUrl${funcionario.email}'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(funcionario.toJson()),
       );
