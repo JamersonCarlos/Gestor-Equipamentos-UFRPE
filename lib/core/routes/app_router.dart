@@ -4,6 +4,7 @@ import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cursos_provid
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cargos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/cards_grid_screen.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/screens/login_screen.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/tags/tags_associateds_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +18,13 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
+  initialLocation: '/login',
   routes: [
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => const LoginScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) {
         return MultiProvider(
@@ -33,7 +39,7 @@ final goRouter = GoRouter(
       },
       routes: [
         GoRoute(
-          path: '/',
+          path: '/dashboard',
           name: 'dashboard',
           builder: (context, state) => const DashboardScreen(),
         ),

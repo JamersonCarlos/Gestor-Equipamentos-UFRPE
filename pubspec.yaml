@@ -60,6 +60,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/animations/scanner_card.json
+    - assets/img/Brasão_UFRPE.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
