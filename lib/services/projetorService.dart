@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gestor_uso_projetores_ufrpe/utils/headerRequest.dart';
 import 'package:http/http.dart' as http;
 
 import '../domain/entities/projetor.dart';
@@ -11,7 +12,8 @@ class ProjetorService {
   ProjetorService() : _baseUrl = '${Env.baseUrl}/equipamentos/';
 
   Future<List<Projetor>> getProjetores() async {
-    final response = await http.get(Uri.parse(_baseUrl));
+    final headers = await getHeaders();
+    final response = await http.get(Uri.parse(_baseUrl), headers: headers);
     
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
@@ -22,9 +24,10 @@ class ProjetorService {
   }
 
   Future<void> addProjetor(Projetor projetor) async {
+
     final response = await http.post(
       Uri.parse(_baseUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: await getHeaders(),
       body: json.encode(projetor.toJson()),
     );
 
@@ -34,8 +37,10 @@ class ProjetorService {
   }
 
   Future<void> deleteProjetor(String id) async {
+    final headers = await getHeaders();
     final response = await http.delete(
       Uri.parse('$_baseUrl$id'),
+      headers: headers
     );
 
     if (response.statusCode != 200) {
@@ -46,7 +51,7 @@ class ProjetorService {
   Future<void> updateProjetor(Projetor projetor) async {
     final response = await http.put(
       Uri.parse('$_baseUrl${projetor.codigo_tombamento}'),
-      headers: {'Content-Type': 'application/json'},
+      headers: await getHeaders(),
       body: json.encode(projetor.toJson()),
     );
 

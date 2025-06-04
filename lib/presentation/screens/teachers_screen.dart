@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/cargo.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/cursos.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/funcionario.dart';
-import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cargos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cursos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/funcionarios_list.dart';

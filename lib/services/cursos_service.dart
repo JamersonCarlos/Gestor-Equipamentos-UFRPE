@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/cursos.dart';
+import 'package:gestor_uso_projetores_ufrpe/utils/headerRequest.dart';
 import 'package:http/http.dart' as http;
 
 import '../core/config/env.dart';
@@ -13,7 +14,8 @@ class CursosService {
 
   Future<List<Curso>> getCursos() async {
     try {
-      final response = await http.get(Uri.parse(_baseUrl));
+      final headers = await getHeaders();
+      final response = await http.get(Uri.parse(_baseUrl), headers: headers);
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
         return jsonList.map<Curso>((json) => Curso.fromJson(json)).toList();

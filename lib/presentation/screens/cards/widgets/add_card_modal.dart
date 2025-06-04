@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/core/constants/access_level.dart';
-import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gestor_uso_projetores_ufrpe/utils/headerRequest.dart';
 import 'package:http/http.dart' as http;
 import '../core/config/env.dart';
 import '../domain/entities/cargo.dart';
@@ -12,12 +13,15 @@ class CargosService {
 
   Future<List<Cargo>> getCargos() async {
     try {
-      final response = await http.get(Uri.parse(_baseUrl));
+      final headers = await getHeaders();
+      final response = await http.get(Uri.parse(_baseUrl), headers: headers);
+
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
         return jsonList.map<Cargo>((json) => Cargo.fromJson(json)).toList();
       } else {
-        throw Exception('Falha ao carregar cargos: ${response.statusCode}');
+        final errorDetail = json.decode(response.body)['detail'] ?? 'Erro desconhecido';
+        throw Exception('Erro ao carregar cargos: $errorDetail');
       }
     } catch (e) {
       throw Exception('Erro ao buscar cargos: $e');
