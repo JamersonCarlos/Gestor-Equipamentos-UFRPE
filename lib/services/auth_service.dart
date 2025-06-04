@@ -17,11 +17,11 @@ class AuthService {
 
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {
+      headers: {'Content-Type': 'application/json'},
+      body:  jsonEncode({
         'username': email,
         'password': password,
-      },
+      }),
     );
 
     if (response.statusCode == 200) {
@@ -52,7 +52,7 @@ class AuthService {
   }
 
   Future<bool> isLoggedIn() async {
-    final url = Uri.parse('$baseUrl/verify-token');
+    final url = Uri.parse('$baseUrl/auth/verify-token');
     final response = await http.get(
       url,
       headers: await getHeaders(),
