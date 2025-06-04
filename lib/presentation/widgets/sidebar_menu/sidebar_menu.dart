@@ -117,12 +117,14 @@ class _SidebarMenuState extends State<SidebarMenu> {
                   isSubmenuOpen: _isCardsMenuOpen,
                   submenuItems: [
                     SubmenuItem(
-                      label: '- Cartões',
+                      icon: Icons.table_rows_rounded,
+                      label: 'Cartões',
                       selected: location == '/cards',
                       onTap: () => context.goNamed('cards'),
                     ),
                     SubmenuItem(
-                      label: '- Tags',
+                      label: 'Tags',
+                      icon: Icons.tag,
                       selected: location.startsWith('/tags-associateds'),
                       onTap: () => context.goNamed('tags-associateds'),
                     ),

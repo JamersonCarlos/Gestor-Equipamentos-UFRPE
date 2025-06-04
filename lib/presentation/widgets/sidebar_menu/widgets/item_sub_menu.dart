@@ -4,10 +4,12 @@ class SubmenuItem extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final IconData icon;
 
   const SubmenuItem({
     super.key,
     required this.label,
+    required this.icon,
     required this.selected,
     required this.onTap,
   });
@@ -23,6 +25,7 @@ class SubmenuItem extends StatelessWidget {
             )
           : null,
       child: ListTile(
+        leading: Icon(icon),
         title: Text(
           label,
           style: TextStyle(
