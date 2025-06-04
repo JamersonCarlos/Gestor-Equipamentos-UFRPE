@@ -1,70 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/uso_equipamento.dart';
+import 'package:gestor_uso_projetores_ufrpe/services/uso_equipamento_service.dart';
 import '../../domain/entities/projetor.dart';
 
 class ProjectorProvider extends ChangeNotifier {
+  final UsoEquipamentoService _usoEquipamentoService = UsoEquipamentoService();
   List<Projetor> _projectors = [];
+  List<UsoEquipamento> _usos = [];
   bool _isLoading = false;
   String? _error;
-  final _entries = [
-      {
-        'name': 'John Michael',
-        'email': 'john@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/men/32.jpg',
-        'function': 'Manager',
-        'subtitle': 'Organization',
-        'status': 'ALOCADO',
-        'statusColor': Color(0xFF2ECC71),
-        'date': '23/04/18',
-        'id': 'PRJ001',
-        'out': '4/16/2024 14:36',
-        'in': '4/17/2024 9:00',
-      },
-      {
-        'name': 'Alexa Liras',
-        'email': 'alexa@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/women/44.jpg',
-        'function': 'Programator',
-        'subtitle': 'Developer',
-        'status': 'DEVOLVIDO',
-        'statusColor': Color(0xFF6C757D),
-        'date': '11/01/19',
-        'id': 'PRJ002',
-        'out': '4/14/2024 00:30',
-        'in': '4/14/2024 10:45',
-      },
-      {
-        'name': 'Laurent Perrier',
-        'email': 'laurent@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/men/43.jpg',
-        'function': 'Executive',
-        'subtitle': 'Projects',
-        'status': 'ALOCADO',
-        'statusColor': Color(0xFF2ECC71),
-        'date': '19/09/17',
-        'id': 'PRJ003',
-        'out': '4/14/2024 11:00',
-        'in': '4/15/2024 16:30',
-      },
-      {
-        'name': 'Miriam Eric',
-        'email': 'miriam@creative-tim.com',
-        'avatar': 'https://randomuser.me/api/portraits/women/65.jpg',
-        'function': 'Programtor',
-        'subtitle': 'Developer',
-        'status': 'ALOCADO',
-        'statusColor': Color(0xFF2ECC71),
-        'date': '14/09/20',
-        'id': 'PRJ004',
-        'out': '4/15/2024 14:35',
-        'in': '4/15/2024 16:35',
-      },
-    ];
 
   List<Projetor> get projectors => _projectors;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  List<UsoEquipamento> get usos => _usos;
 
-  List<Map<String, Object>> get entries => _entries;
+  List<Map<String, dynamic>> get entries {
+    return _usos.map((uso) {
+      final funcionario = uso.funcionario;
+      final equipamento = uso.equipamento;
+
+      return {
+        'name': funcionario['nome'] ?? 'N/A',
+        'email': funcionario['email'] ?? 'N/A',
+        'avatar':
+            'https://ui-avatars.com/api/?name=${funcionario['nome'] ?? 'U'}&background=random',
+        'function': funcionario['cargo']['nome'] ?? 'N/A',
+        'subtitle': funcionario['curso']['nome'] ?? 'N/A',
+        'status': uso.status.value,
+        'statusColor': uso.status.color,
+        'id': equipamento['codigo_tombamento'] ?? 'N/A',
+        'out': _formatDate(uso.dataAluguel),
+        'in': uso.dataDevolucao != null
+            ? _formatDate(uso.dataDevolucao!)
+            : 'Pendente',
+      };
+    }).toList();
+  }
+
+  String _formatDate(DateTime date) {
+    final dia = date.day.toString().padLeft(2, '0');
+    final mes = date.month.toString().padLeft(2, '0');
+    final hora = date.hour.toString().padLeft(2, '0');
+    final minuto = date.minute.toString().padLeft(2, '0');
+
+    return '$dia/$mes/${date.year} $hora:$minuto hr';
+  }
 
   Future<void> loadProjectors() async {
     _isLoading = true;
@@ -72,17 +53,15 @@ class ProjectorProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-
       await Future.delayed(const Duration(seconds: 1)); // Simulação de delay
       _projectors = [
         Projetor(
           codigo_tag: "",
           codigo_tombamento: "232",
-          cor: "preto", 
+          cor: "preto",
           marca: "LG",
           modelo: "1234",
         ),
-        
       ];
     } catch (e) {
       _error = 'Erro ao carregar projetores: $e';
@@ -92,54 +71,16 @@ class ProjectorProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addProjector(Projetor projector) async {
+  Future<void> getUsos() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      // TODO: Implementar chamada ao repositório
-      await Future.delayed(const Duration(seconds: 1)); // Simulação de delay
-      _projectors.add(projector);
+      final usos = await _usoEquipamentoService.getUsos();
+      _usos = usos;
     } catch (e) {
-      _error = 'Erro ao adicionar projetor: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateProjector(Projetor projector) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      // TODO: Implementar chamada ao repositório
-      await Future.delayed(const Duration(seconds: 1)); // Simulação de delay
-      final index = _projectors.indexWhere((p) => p.codigo_tombamento == projector.codigo_tombamento);
-      if (index != -1) {
-        _projectors[index] = projector;
-      }
-    } catch (e) {
-      _error = 'Erro ao atualizar projetor: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteProjector(String id) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      // TODO: Implementar chamada ao repositório
-      await Future.delayed(const Duration(seconds: 1)); // Simulação de delay
-      _projectors.removeWhere((p) => p.codigo_tombamento == id);
-    } catch (e) {
-      _error = 'Erro ao deletar projetor: $e';
+      _error = 'Erro ao carregar usos: $e';
     } finally {
       _isLoading = false;
       notifyListeners();

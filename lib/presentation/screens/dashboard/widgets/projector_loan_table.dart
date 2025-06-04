@@ -11,9 +11,28 @@ class ProjectorLoanTable extends StatefulWidget {
 
 class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => context.read<ProjectorProvider>().getUsos());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final provider = context.read<ProjectorProvider>();
+    final provider = context.watch<ProjectorProvider>();
     final entries = provider.entries;
+
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.error != null) {
+      return Center(
+        child: Text(
+          'Erro ao carregar dados: ${provider.error}',
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
 
     return Card(
       elevation: 2,
