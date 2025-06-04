@@ -41,6 +41,7 @@ dependencies:
   brasil_fields: ^1.14.0
   lottie: ^3.3.0
   web_socket_channel: ^2.4.0
+  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/animations/scanner_card.json
+    - assets/img/Brasão_UFRPE.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

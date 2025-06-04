@@ -1,29 +1,30 @@
 import 'dart:convert';
-import 'package:gestor_uso_projetores_ufrpe/domain/entities/cursos.dart';
 import 'package:gestor_uso_projetores_ufrpe/utils/headerRequest.dart';
 import 'package:http/http.dart' as http;
-
 import '../core/config/env.dart';
+import '../domain/entities/cargo.dart';
 
-class CursosService {
+class CargosService {
   final String _baseUrl;
 
-  CursosService() : _baseUrl = '${Env.baseUrl}/cursos/';
+  CargosService() : _baseUrl = '${Env.baseUrl}/cargos/';
 
   final http.Client httpClient = http.Client();
 
-  Future<List<Curso>> getCursos() async {
+  Future<List<Cargo>> getCargos() async {
     try {
       final headers = await getHeaders();
       final response = await http.get(Uri.parse(_baseUrl), headers: headers);
+
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
-        return jsonList.map<Curso>((json) => Curso.fromJson(json)).toList();
+        return jsonList.map<Cargo>((json) => Cargo.fromJson(json)).toList();
       } else {
-        throw Exception('Falha ao carregar cursos: ${response.statusCode}');
+        final errorDetail = json.decode(response.body)['detail'] ?? 'Erro desconhecido';
+        throw Exception('Erro ao carregar cargos: $errorDetail');
       }
     } catch (e) {
-      throw Exception('Erro ao buscar cursos: $e');
+      throw Exception('Erro ao buscar cargos: $e');
     }
   }
 }

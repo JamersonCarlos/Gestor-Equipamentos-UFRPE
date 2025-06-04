@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/cargo.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/cursos.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/funcionario.dart';
-import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cargos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cursos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/funcionarios_list.dart';
 import 'package:provider/provider.dart';
@@ -21,13 +23,14 @@ class TeachersScreen extends StatefulWidget {
 
 class _TeachersScreenState extends State<TeachersScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _cpfController = TextEditingController();
+  final _emailController = TextEditingController();
   final _codigoCartaoController = TextEditingController();
-  final _nomeController = TextEditingController();
   final _cursoIdController = TextEditingController();
+  final _cargoIdController = TextEditingController();
   final _funcionarioService = FuncionarioService();
   String? _selectedCartao;
   String? _selectedCurso;
+  String? _selectedCargo;
 
   @override
   void initState() {
@@ -38,10 +41,10 @@ class _TeachersScreenState extends State<TeachersScreen> {
     if (_formKey.currentState!.validate()) {
       try {
         final funcionario = Funcionario(
-          cpf: _cpfController.text,
+          email: _emailController.text,
           codigo_cartao: _codigoCartaoController.text,
-          nome: _nomeController.text,
           curso_id: int.parse(_cursoIdController.text),
+          cargo_id: int.parse(_cargoIdController.text),
         );
         await _funcionarioService.createFuncionario(funcionario);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -67,6 +70,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
   Widget build(BuildContext context) {
     final cardsProvider = Provider.of<CardsProvider>(context);
     final cursosProvider = Provider.of<CursosProvider>(context);
+    final cargosProvider = Provider.of<CargosProvider>(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,28 +94,41 @@ class _TeachersScreenState extends State<TeachersScreen> {
                           child: SizedBox(
                             height: 80, // Altura fixa para todos os campos
                             child: TextFormField(
-                              controller: _cpfController,
+                              controller: _emailController,
                               decoration: _buildInputDecoration(
-                                'CPF',
-                                'Digite o CPF do professor',
+                                'Email',
+                                'Digite o email do professor',
+                              ).copyWith(
+                                suffixText: '@ufrpe.br',
                               ),
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.emailAddress,
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                CpfInputFormatter(),
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9._%-]')),
                               ],
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Por favor, digite o CPF';
+                                  return 'Por favor, digite o email';
                                 }
-                                value = value.replaceAll(RegExp(r'[^0-9]'), '');
-                                if (value.length != 11) {
-                                  return 'O CPF deve conter 11 dígitos';
-                                }
-                                if (!UtilBrasilFields.isCPFValido(value)) {
-                                  return 'CPF inválido';
+
+                                // Remove espaços e concatena com sufixo fixo
+                                final emailCompleto =
+                                    value.trim().toLowerCase() + '@ufrpe.br';
+
+                                // Regex para validar email completo
+                                final emailRegex =
+                                    RegExp(r'^[a-z0-9._%-]+@ufrpe\.br$');
+
+                                if (!emailRegex.hasMatch(emailCompleto)) {
+                                  return 'Formato de email inválido';
                                 }
                                 return null;
+                              },
+                              onSaved: (value) {
+                                // Salva o email completo concatenado
+                                final emailCompleto =
+                                    '${value!.trim()}@ufrpe.br';
+                                _emailController.text = emailCompleto;
                               },
                             ),
                           ),
@@ -158,26 +175,6 @@ class _TeachersScreenState extends State<TeachersScreen> {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          flex: 2,
-                          child: SizedBox(
-                            height: 80,
-                            child: TextFormField(
-                              controller: _nomeController,
-                              decoration: _buildInputDecoration(
-                                'Nome',
-                                'Digite o nome do professor',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor, digite o nome';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
                           child: SizedBox(
                             height: 80,
                             child: FutureBuilder<List<Curso>>(
@@ -207,6 +204,54 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Por favor, selecione um cartão';
+                                    }
+                                    return null;
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: SizedBox(
+                            height: 80,
+                            child: FutureBuilder<List<Cargo>>(
+                              future: cargosProvider.fetchCargos(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                if (snapshot.hasError) {
+                                  return Text(
+                                      'Erro ao carregar cargos: ${snapshot.error}');
+                                }
+                                return DropdownButtonFormField<String>(
+                                  isExpanded: true,
+                                  value: _selectedCargo,
+                                  decoration: _buildInputDecoration(
+                                    'Cargo',
+                                    'Selecione o cargo do professor',
+                                  ),
+                                  items: snapshot.hasData
+                                      ? snapshot.data!.map((Cargo cargo) {
+                                          return DropdownMenuItem<String>(
+                                            value: cargo.id.toString(),
+                                            child: Text(cargo.nome),
+                                          );
+                                        }).toList()
+                                      : [],
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedCargo = newValue;
+                                      _cargoIdController.text = newValue ?? '';
+                                    });
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Por favor, selecione um cargo';
                                     }
                                     return null;
                                   },

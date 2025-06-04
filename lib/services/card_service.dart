@@ -3,6 +3,7 @@ import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/r
 import 'package:http/http.dart' as http;
 import '../core/config/env.dart';
 import '../domain/entities/rfid_card.dart';
+import 'package:gestor_uso_projetores_ufrpe/utils/headerRequest.dart';
 
 class CardService {
   final String _baseUrl;
@@ -13,7 +14,7 @@ class CardService {
     try {
       final response = await http.get(
         Uri.parse('$_baseUrl?skip=$skip&limit=$limit'),
-        headers: {'accept': 'application/json'},
+        headers: await getHeaders(),
       );
 
       if (response.statusCode == 200) {
@@ -33,7 +34,7 @@ class CardService {
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: await getHeaders(),
         body: json.encode({
           'rfid': card.cardId,
           'nome': card.label,
@@ -55,7 +56,7 @@ class CardService {
     try {
       final response = await http.delete(
         Uri.parse('$_baseUrl$id'),
-        headers: {'Content-Type': 'application/json'},
+        headers: await getHeaders(),
       );
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw Exception('Erro ao deletar cartão: ${response.statusCode}');

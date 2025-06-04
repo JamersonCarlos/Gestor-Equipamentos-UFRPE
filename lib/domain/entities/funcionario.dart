@@ -1,31 +1,31 @@
 class Funcionario {
-  final String cpf;
+  final String email;
   final String codigo_cartao;
-  final String nome;
   final int curso_id;
+  final int cargo_id;
 
   Funcionario({
-    required this.cpf,
+    required this.email,
     required this.codigo_cartao,
-    required this.nome,
     required this.curso_id,
+    required this.cargo_id,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'cpf': cpf.replaceAll(RegExp(r'[^0-9]'), ''),
+      'cpf': email.replaceAll(RegExp(r'[^0-9]'), ''),
       'codigo_cartao': codigo_cartao,
-      'nome': nome,
       'curso_id': curso_id,
+      'cargo_id': cargo_id,
     };
   }
 
   factory Funcionario.fromJson(Map<String, dynamic> json) {
     return Funcionario(
-      cpf: json['cpf'],
+      email: json['cpf'],
       codigo_cartao: json['codigo_cartao'],
-      nome: json['nome'],
       curso_id: json['curso_id'],
+      cargo_id: json['cargo_id'],
     );
   }
 }
