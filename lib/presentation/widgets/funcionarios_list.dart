@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provier.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
 import 'package:provider/provider.dart';
 import '../../domain/entities/funcionario.dart';

@@ -22,7 +22,7 @@ class Funcionario {
 
   factory Funcionario.fromJson(Map<String, dynamic> json) {
     return Funcionario(
-      email: json['cpf'],
+      email: json['email'],
       codigo_cartao: json['codigo_cartao'],
       curso_id: json['curso_id'],
       cargo_id: json['cargo_id'],
