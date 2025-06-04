@@ -20,7 +20,7 @@ class UsoEquipamentoService {
           .map<UsoEquipamento>((json) => UsoEquipamento.fromJson(json))
           .toList();
     } else {
-      throw Exception('Falha ao carregar usos: ${response.statusCode}');
+      return [];
     }
   }
 }

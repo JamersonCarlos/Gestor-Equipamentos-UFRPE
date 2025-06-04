@@ -21,8 +21,8 @@ class FuncionarioService {
       } else {
         throw Exception('Falha ao carregar funcionários: ${response.statusCode}');
       }
-    } catch (e) {
-      throw Exception('Erro ao buscar funcionários: $e');
+    } on Exception {
+      return [];
     }
   }
 

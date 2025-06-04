@@ -19,7 +19,7 @@ class ProjetorService {
       List<dynamic> jsonList = json.decode(response.body);
       return jsonList.map((json) => Projetor.fromJson(json)).toList();
     } else {
-      throw Exception('Falha ao carregar projetores');
+      return [];
     }
   }
 

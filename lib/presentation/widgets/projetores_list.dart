@@ -50,7 +50,7 @@ class _ProjetoresListState extends State<ProjetoresList> {
         if (asyncSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (asyncSnapshot.hasError) {
-          return Center(child: Text('Erro: ${asyncSnapshot.error}')); 
+          return const Center(child: Text('Erro: Sem conexão com o servidor')); 
         } else if (!asyncSnapshot.hasData || asyncSnapshot.data!.isEmpty) {
           return const Center(child: Text('Nenhum projetor cadastrado.'));
         }

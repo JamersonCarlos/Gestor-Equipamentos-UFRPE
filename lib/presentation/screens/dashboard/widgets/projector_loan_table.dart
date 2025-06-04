@@ -26,10 +26,10 @@ class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
     }
 
     if (provider.error != null) {
-      return Center(
+      return const Center(
         child: Text(
-          'Erro ao carregar dados: ${provider.error}',
-          style: const TextStyle(color: Colors.red),
+          'Erro: Sem conexão com o servidor',
+          style: TextStyle(color: Colors.red),
         ),
       );
     }

@@ -224,10 +224,6 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   return const Center(
                                       child: CircularProgressIndicator());
                                 }
-                                if (snapshot.hasError) {
-                                  return Text(
-                                      'Erro ao carregar cargos: ${snapshot.error}');
-                                }
                                 return DropdownButtonFormField<String>(
                                   isExpanded: true,
                                   value: _selectedCargo,
