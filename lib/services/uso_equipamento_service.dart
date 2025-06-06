@@ -19,6 +19,21 @@ class UsoEquipamentoService {
       return jsonList
           .map<UsoEquipamento>((json) => UsoEquipamento.fromJson(json))
           .toList();
+      
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getEmprestimosPorDia() async {
+    final response = await http.get(
+      Uri.parse('${_baseUrl}emprestimos-por-dia'),
+      headers: {'accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.cast<Map<String, dynamic>>();
     } else {
       return [];
     }
