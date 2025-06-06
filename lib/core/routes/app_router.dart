@@ -66,7 +66,7 @@ final goRouter = GoRouter(
         GoRoute(
           path: '/tags-associateds',
           name: 'tags-associateds',
-          builder: (context, state) => const TagsAssociatedsScreen(),
+          builder: (context, state) => ElegantTagDashboard(),
         ),
       ],
     ),
