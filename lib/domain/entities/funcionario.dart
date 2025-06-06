@@ -13,7 +13,7 @@ class Funcionario {
 
   Map<String, dynamic> toJson() {
     return {
-      'cpf': email.replaceAll(RegExp(r'[^0-9]'), ''),
+      'email': email,
       'codigo_cartao': codigo_cartao,
       'curso_id': curso_id,
       'cargo_id': cargo_id,
