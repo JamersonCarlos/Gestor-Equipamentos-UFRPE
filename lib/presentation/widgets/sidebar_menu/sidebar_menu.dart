@@ -89,7 +89,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                 SidebarMenuItem(
                   icon: Icons.dashboard,
                   label: 'Dashboard',
-                  selected: location == '/' || location.startsWith('/?'),
+                  selected: location == '/' || location.startsWith('/dashboard'),
                   onTap: () => context.goNamed('dashboard'),
                 ),
                 SidebarMenuItem(
