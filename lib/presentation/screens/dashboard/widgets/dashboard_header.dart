@@ -1,36 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/emprestimos_dia_provider.dart';
+import 'package:provider/provider.dart';
 
-class DashboardHeader extends StatelessWidget {
+class DashboardHeader extends StatefulWidget {
   const DashboardHeader({super.key});
 
   @override
+  State<DashboardHeader> createState() => _DashboardHeaderState();
+}
+
+class _DashboardHeaderState extends State<DashboardHeader> {
+  @override
   Widget build(BuildContext context) {
-    return const Wrap(
-      spacing: 18,
-      runSpacing: 16,
-      alignment: WrapAlignment.center,
-      children: [
-        StatCard(
-          title: 'Total Loans',
-          value: '96',
-          icon: Icons.account_tree_rounded,
-        ),
-        StatCard(
-          title: 'Most Active Day',
-          value: 'Wednesday',
-          icon: Icons.calendar_month,
-        ),
-        StatCard(
-          title: 'Most Active Teacher',
-          value: 'Michael Johnson',
-          icon: Icons.person,
-        ),
-        StatCard(
-          title: 'Most Active Teacher',
-          value: 'Michael Johnson',
-          icon: Icons.person,
-        ),
-      ],
+    final emprestimosDiaProvider = Provider.of<EmprestimosDiaProvider>(context);
+
+    return FutureBuilder(
+      future: emprestimosDiaProvider.getDiaMaisAtivo(),
+      builder: (context, snapshot) {
+        final diaMaisAtivo = snapshot.data ?? '';
+        final professorMaisAtivo =
+            emprestimosDiaProvider.getProfessorMaisAtivo();
+        return Wrap(
+          spacing: 18,
+          runSpacing: 16,
+          alignment: WrapAlignment.center,
+          children: [
+            StatCard(
+              title: 'Total Loans',
+              value: emprestimosDiaProvider.emprestimosPorDia.length.toString(),
+              icon: Icons.account_tree_rounded,
+            ),
+            StatCard(
+              title: 'Most Active Day',
+              value: diaMaisAtivo,
+              icon: Icons.calendar_month,
+            ),
+            const StatCard(
+              title: 'Most Active Teacher',
+              value: 'Michael Johnson',
+              icon: Icons.person,
+            ),
+            const StatCard(
+              title: 'Most Active Teacher',
+              value: 'Michael Johnson',
+              icon: Icons.person,
+            ),
+          ],
+        );
+      },
     );
   }
 }
