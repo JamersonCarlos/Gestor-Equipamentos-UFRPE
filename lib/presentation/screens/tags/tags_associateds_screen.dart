@@ -20,25 +20,50 @@ class ElegantTagDashboard extends StatelessWidget {
   ElegantTagDashboard({super.key});
 
   final List<TagInfo> _tags = [
-    TagInfo(id: 'TAG-001-A', equipmentName: 'Torno CNC-102', lastActivity: 'Hoje, 14:30', isActive: true),
-    TagInfo(id: 'TAG-002-B', equipmentName: 'Prensa Hidráulica P-45', lastActivity: 'Ontem, 09:15', isActive: true),
-    TagInfo(id: 'TAG-003-C', equipmentName: 'Esteira Transportadora E-12', lastActivity: '2 dias atrás', isActive: false),
-    TagInfo(id: 'TAG-004-D', equipmentName: 'Compressor de Ar C-03', lastActivity: 'Hoje, 11:05', isActive: true),
-    TagInfo(id: 'TAG-005-E', equipmentName: 'Gerador G-01', lastActivity: '1 dia atrás', isActive: true),
-    TagInfo(id: 'TAG-006-F', equipmentName: 'Empilhadeira Emp-05', lastActivity: '5 dias atrás', isActive: false),
+    TagInfo(
+        id: 'TAG-001-A',
+        equipmentName: 'Torno CNC-102',
+        lastActivity: 'Hoje, 14:30',
+        isActive: true),
+    TagInfo(
+        id: 'TAG-002-B',
+        equipmentName: 'Prensa Hidráulica P-45',
+        lastActivity: 'Ontem, 09:15',
+        isActive: true),
+    TagInfo(
+        id: 'TAG-003-C',
+        equipmentName: 'Esteira Transportadora E-12',
+        lastActivity: '2 dias atrás',
+        isActive: false),
+    TagInfo(
+        id: 'TAG-004-D',
+        equipmentName: 'Compressor de Ar C-03',
+        lastActivity: 'Hoje, 11:05',
+        isActive: true),
+    TagInfo(
+        id: 'TAG-005-E',
+        equipmentName: 'Gerador G-01',
+        lastActivity: '1 dia atrás',
+        isActive: true),
+    TagInfo(
+        id: 'TAG-006-F',
+        equipmentName: 'Empilhadeira Emp-05',
+        lastActivity: '5 dias atrás',
+        isActive: false),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC), // Um cinza bem claro para o fundo
+      backgroundColor:
+          const Color(0xFFF7F8FC), // Um cinza bem claro para o fundo
       body: Row(
         children: [
-
           // Conteúdo Principal
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -71,7 +96,8 @@ class Header extends StatelessWidget {
     return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Tags de Equipamentos', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+        Text('Tags de Equipamentos',
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -88,10 +114,26 @@ class ListHeader extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: Row(
         children: [
-          Expanded(flex: 3, child: Text('ID da Tag', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500))),
-          Expanded(flex: 4, child: Text('Equipamento Associado', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500))),
-          Expanded(flex: 3, child: Text('Última Atividade', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500))),
-          Expanded(flex: 2, child: Text('Status', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500))),
+          Expanded(
+              flex: 3,
+              child: Text('ID da Tag',
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500))),
+          Expanded(
+              flex: 4,
+              child: Text('Equipamento Associado',
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500))),
+          Expanded(
+              flex: 3,
+              child: Text('Última Atividade',
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500))),
+          Expanded(
+              flex: 2,
+              child: Text('Status',
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500))),
           SizedBox(width: 50), // Espaço para o botão de menu
         ],
       ),
@@ -131,9 +173,29 @@ class TagListItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(flex: 3, child: Text(tagInfo.id, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-          Expanded(flex: 4, child: Text(tagInfo.equipmentName, style: const TextStyle(color: Colors.grey))),
-          Expanded(flex: 3, child: Text(tagInfo.lastActivity, style: const TextStyle(color: Colors.grey))),
+          // Pipe colorido
+          Container(
+            width: 5,
+            height: 40,
+            decoration: BoxDecoration(
+              color: tagInfo.isActive ? Colors.purple : Colors.grey,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            margin: const EdgeInsets.only(right: 16),
+          ),
+          Expanded(
+              flex: 3,
+              child: Text(tagInfo.id,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15))),
+          Expanded(
+              flex: 4,
+              child: Text(tagInfo.equipmentName,
+                  style: const TextStyle(color: Colors.grey))),
+          Expanded(
+              flex: 3,
+              child: Text(tagInfo.lastActivity,
+                  style: const TextStyle(color: Colors.grey))),
           Expanded(
             flex: 2,
             child: Row(
