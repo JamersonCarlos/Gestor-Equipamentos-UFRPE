@@ -3,6 +3,7 @@ import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provide
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cursos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cargos_provider.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/tags_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/cards_grid_screen.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/login_screen.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/tags/tags_associateds_screen.dart';
@@ -33,6 +34,7 @@ final goRouter = GoRouter(
             ChangeNotifierProvider(create: (context) => CardsProvider()),
             ChangeNotifierProvider(create: (context) => CursosProvider()),
             ChangeNotifierProvider(create: (context) => CargosProvider()),
+            ChangeNotifierProvider(create: (context) => TagsProvider()),
           ],
           child: MainLayout(child: child),
         );

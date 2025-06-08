@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/tags_provider.dart';
+import 'package:provider/provider.dart';
 
-// Modelo de dados para a Tag
 class TagInfo {
   final String id;
   final String equipmentName;
@@ -16,47 +17,26 @@ class TagInfo {
 }
 
 // Tela principal do Dashboard
-class ElegantTagDashboard extends StatelessWidget {
-  ElegantTagDashboard({super.key});
+class ElegantTagDashboard extends StatefulWidget {
+  const ElegantTagDashboard({super.key});
 
-  final List<TagInfo> _tags = [
-    TagInfo(
-        id: 'TAG-001-A',
-        equipmentName: 'Torno CNC-102',
-        lastActivity: 'Hoje, 14:30',
-        isActive: true),
-    TagInfo(
-        id: 'TAG-002-B',
-        equipmentName: 'Prensa Hidráulica P-45',
-        lastActivity: 'Ontem, 09:15',
-        isActive: true),
-    TagInfo(
-        id: 'TAG-003-C',
-        equipmentName: 'Esteira Transportadora E-12',
-        lastActivity: '2 dias atrás',
-        isActive: false),
-    TagInfo(
-        id: 'TAG-004-D',
-        equipmentName: 'Compressor de Ar C-03',
-        lastActivity: 'Hoje, 11:05',
-        isActive: true),
-    TagInfo(
-        id: 'TAG-005-E',
-        equipmentName: 'Gerador G-01',
-        lastActivity: '1 dia atrás',
-        isActive: true),
-    TagInfo(
-        id: 'TAG-006-F',
-        equipmentName: 'Empilhadeira Emp-05',
-        lastActivity: '5 dias atrás',
-        isActive: false),
-  ];
+  @override
+  State<ElegantTagDashboard> createState() => _ElegantTagDashboardState();
+}
+
+class _ElegantTagDashboardState extends State<ElegantTagDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TagsProvider>(context, listen: false).fetchTags();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final tagsProvider = Provider.of<TagsProvider>(context);
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFF7F8FC), // Um cinza bem claro para o fundo
       body: Row(
         children: [
           // Conteúdo Principal
@@ -75,7 +55,12 @@ class ElegantTagDashboard extends StatelessWidget {
                   const SizedBox(height: 10),
                   // Lista de Tags
                   Expanded(
-                    child: TagListView(tags: _tags),
+                    child: tagsProvider.isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : tagsProvider.tags.isEmpty
+                            ? const Center(
+                                child: Text('Nenhuma tag encontrada'))
+                            : TagListView(tags: tagsProvider.tags),
                   ),
                 ],
               ),
@@ -142,17 +127,22 @@ class ListHeader extends StatelessWidget {
 }
 
 // Widget da Lista de Tags
-class TagListView extends StatelessWidget {
+class TagListView extends StatefulWidget {
   final List<TagInfo> tags;
   const TagListView({super.key, required this.tags});
 
   @override
+  State<TagListView> createState() => _TagListViewState();
+}
+
+class _TagListViewState extends State<TagListView> {
+  @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: tags.length,
+      itemCount: widget.tags.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
-        return TagListItem(tagInfo: tags[index]);
+        return TagListItem(tagInfo: widget.tags[index]);
       },
     );
   }
