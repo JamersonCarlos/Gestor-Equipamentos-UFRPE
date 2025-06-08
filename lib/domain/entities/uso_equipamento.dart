@@ -26,7 +26,7 @@ class UsoEquipamento {
   factory UsoEquipamento.fromJson(Map<String, dynamic> json) {
     return UsoEquipamento(
       protocolo: json['protocolo'],
-      equipamentoCodigo: json['equipamento_codigo'],
+      equipamentoCodigo: json['equipamento']['codigo_tombamento'],
       email: json['funcionario']['email'],
       dataAluguel: DateTime.parse(json['data_aluguel']),
       dataDevolucao: json['data_devolucao'] != null
