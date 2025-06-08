@@ -138,7 +138,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                           child: SizedBox(
                             height: 80,
                             child: FutureBuilder<List<RfidCardInfo>>(
-                              future: cardsProvider.rfidCards(),
+                              future: cardsProvider.getCardNotUsed(),
                               builder: (context, snapshot) {
                                 return DropdownButtonFormField<String>(
                                   isExpanded: true,

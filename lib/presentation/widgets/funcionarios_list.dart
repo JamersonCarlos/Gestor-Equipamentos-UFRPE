@@ -151,16 +151,13 @@ class _FuncionariosListState extends State<FuncionariosList> {
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        FutureBuilder<List<RfidCardInfo>>(
-                                          future: cardsProvider.rfidCards(),
+                                        FutureBuilder<RfidCardInfo?>(
+                                          future: cardsProvider.findCard(
+                                              funcionario.codigo_cartao),
                                           builder: (context, snapshot) {
                                             RfidCardInfo? card;
                                             try {
-                                              card = snapshot.data!.firstWhere(
-                                                (card) =>
-                                                    card.cardId ==
-                                                    funcionario.codigo_cartao,
-                                              );
+                                              card = snapshot.data;
                                             } catch (_) {
                                               card = null;
                                             }
@@ -171,8 +168,8 @@ class _FuncionariosListState extends State<FuncionariosList> {
                                             return SizedBox(
                                               width: 400,
                                               height: 220,
-                                              child: RfidCardItem(
-                                                  cardInfo: card),
+                                              child:
+                                                  RfidCardItem(cardInfo: card),
                                             );
                                           },
                                         ),

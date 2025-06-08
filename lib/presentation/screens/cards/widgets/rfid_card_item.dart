@@ -50,7 +50,8 @@ class RfidCardItem extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: [
-                      Icon(cardInfo.accessLevel.icon, color: Colors.white, size: 28),
+                      Icon(cardInfo.accessLevel.icon,
+                          color: Colors.white, size: 28),
                       const SizedBox(width: 10),
                       const Expanded(
                         child: Text(
@@ -85,12 +86,12 @@ class RfidCardItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                    'ID: ${cardInfo.cardId}',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.white60,
+                      'ID: ${cardInfo.cardId}',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.white60,
+                      ),
                     ),
-                  ),
                   ),
                   const SizedBox(height: 6),
                   Text(
