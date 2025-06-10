@@ -52,6 +52,10 @@ class _TeachersScreenState extends State<TeachersScreen> {
             backgroundColor: AppColors.primary,
           ),
         );
+        _emailController.clear();
+        _codigoCartaoController.clear();
+        _cursoIdController.clear();
+        _cargoIdController.clear();
         _formKey.currentState!.reset();
         setState(() {});
       } catch (e) {
