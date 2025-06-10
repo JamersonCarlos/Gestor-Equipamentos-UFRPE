@@ -12,7 +12,6 @@ import '../../services/funcionarioService.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
 
 import '../../core/theme/app_colors.dart';
-import 'package:brasil_fields/brasil_fields.dart';
 
 class TeachersScreen extends StatefulWidget {
   const TeachersScreen({super.key});
@@ -41,7 +40,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
     if (_formKey.currentState!.validate()) {
       try {
         final funcionario = Funcionario(
-          email: _emailController.text,
+          email: '${_emailController.text}@ufrpe.br',
           codigo_cartao: _codigoCartaoController.text,
           curso_id: int.parse(_cursoIdController.text),
           cargo_id: int.parse(_cargoIdController.text),
@@ -110,25 +109,12 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                 if (value == null || value.isEmpty) {
                                   return 'Por favor, digite o email';
                                 }
-
-                                // Remove espaços e concatena com sufixo fixo
-                                final emailCompleto =
-                                    value.trim().toLowerCase() + '@ufrpe.br';
-
-                                // Regex para validar email completo
-                                final emailRegex =
-                                    RegExp(r'^[a-z0-9._%-]+@ufrpe\.br$');
-
-                                if (!emailRegex.hasMatch(emailCompleto)) {
+                                // Regex para validar apenas o usuário do email (sem domínio)
+                                final userRegex = RegExp(r'^[a-zA-Z0-9._%-]+$');
+                                if (!userRegex.hasMatch(value.trim())) {
                                   return 'Formato de email inválido';
                                 }
                                 return null;
-                              },
-                              onSaved: (value) {
-                                // Salva o email completo concatenado
-                                final emailCompleto =
-                                    '${value!.trim()}@ufrpe.br';
-                                _emailController.text = emailCompleto;
                               },
                             ),
                           ),

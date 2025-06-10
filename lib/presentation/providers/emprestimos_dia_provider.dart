@@ -24,12 +24,36 @@ class EmprestimosDiaProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<String> getDiaMaisAtivo() async {
-    final diaMaisAtivo = _emprestimosPorDia.firstWhere((dia) => dia['total_emprestimos'] == _emprestimosPorDia.map((dia) => dia['total_emprestimos']).reduce((a, b) => a > b ? a : b));
-    return diaMaisAtivo['dia_semana'];
+    if (_emprestimosPorDia.isEmpty) {
+      return '';
+    }
+    final diaMaisAtivo = _emprestimosPorDia.firstWhere(
+      (dia) =>
+          dia['total_emprestimos'] ==
+          _emprestimosPorDia
+              .map((dia) => dia['total_emprestimos'])
+              .reduce((a, b) => a > b ? a : b),
+      orElse: () => {},
+    );
+    return diaMaisAtivo.isNotEmpty ? diaMaisAtivo['dia_semana'] ?? '' : '';
   }
+
   Future<String> getProfessorMaisAtivo() async {
-    final professorMaisAtivo = _emprestimosPorDia.firstWhere((dia) => dia['emprestimos'] == _emprestimosPorDia.map((dia) => dia['emprestimos']).reduce((a, b) => a > b ? a : b));
-    return professorMaisAtivo['professor'];
+    if (_emprestimosPorDia.isEmpty) {
+      return '';
+    }
+    final professorMaisAtivo = _emprestimosPorDia.firstWhere(
+      (dia) =>
+          dia['emprestimos'] ==
+          _emprestimosPorDia
+              .map((dia) => dia['emprestimos'])
+              .reduce((a, b) => a > b ? a : b),
+      orElse: () => {},
+    );
+    return professorMaisAtivo.isNotEmpty
+        ? professorMaisAtivo['professor'] ?? ''
+        : '';
   }
 }
