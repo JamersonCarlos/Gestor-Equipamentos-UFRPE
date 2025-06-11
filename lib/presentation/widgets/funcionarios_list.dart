@@ -79,143 +79,159 @@ class _FuncionariosListState extends State<FuncionariosList> {
   @override
   Widget build(BuildContext context) {
     CardsProvider cardsProvider = Provider.of<CardsProvider>(context);
-    return FutureBuilder(
-        future: _funcionarioService.getFuncionarios(),
-        builder: (context, asyncSnapshot) {
-          if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (asyncSnapshot.hasError) {
-            return Center(child: Text('Erro: ${asyncSnapshot.error}'));
-          } else if (!asyncSnapshot.hasData || asyncSnapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhum professor cadastrado.'));
-          }
+    return Column(
+      children: [
+        Expanded(
+          child: FutureBuilder(
+              future: _funcionarioService.getFuncionarios(),
+              builder: (context, asyncSnapshot) {
+                if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (asyncSnapshot.hasError) {
+                  return Center(child: Text('Erro: ${asyncSnapshot.error}'));
+                } else if (!asyncSnapshot.hasData ||
+                    asyncSnapshot.data!.isEmpty) {
+                  return const Center(
+                      child: Text('Nenhum professor cadastrado.'));
+                }
 
-          List<Funcionario> _funcionarios = asyncSnapshot.data!;
-          return ListView.builder(
-            itemCount: _funcionarios.length,
-            itemBuilder: (context, index) {
-              final funcionario = _funcionarios[index];
-              return Card(
-                elevation: 4,
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            funcionario.email,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                List<Funcionario> _funcionarios = asyncSnapshot.data!;
+                return ListView.builder(
+                  itemCount: _funcionarios.length,
+                  itemBuilder: (context, index) {
+                    final funcionario = _funcionarios[index];
+                    return Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  funcionario.email,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Código do cartão: ${funcionario.codigo_cartao}',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Código do cartão: ${funcionario.codigo_cartao}',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.credit_card),
-                            label: const Text('Código Cartão'),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  TextEditingController codigoCartaoController =
-                                      TextEditingController(
-                                          text: funcionario.codigo_cartao);
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                OutlinedButton.icon(
+                                  icon: const Icon(Icons.credit_card),
+                                  label: const Text('Código Cartão'),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        TextEditingController
+                                            codigoCartaoController =
+                                            TextEditingController(
+                                                text:
+                                                    funcionario.codigo_cartao);
 
-                                  return AlertDialog(
-                                    title: const Center(
-                                        child: Text(
-                                      'Código do Cartão',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14),
-                                    )),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        FutureBuilder<RfidCardInfo?>(
-                                          future: cardsProvider.findCard(
-                                              funcionario.codigo_cartao),
-                                          builder: (context, snapshot) {
-                                            RfidCardInfo? card;
-                                            try {
-                                              card = snapshot.data;
-                                            } catch (_) {
-                                              card = null;
-                                            }
-                                            if (card == null) {
-                                              return const Text(
-                                                  'Cartão não encontrado');
-                                            }
-                                            return SizedBox(
-                                              width: 400,
-                                              height: 220,
-                                              child:
-                                                  RfidCardItem(cardInfo: card),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text("Fechar"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          _updateFuncionario(funcionario,
-                                              codigoCartaoController.text);
-                                        },
-                                        child: const Text('Salvar Alterações'),
-                                      )
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.primary,
-                              side: const BorderSide(color: AppColors.primary),
+                                        return AlertDialog(
+                                          title: const Center(
+                                              child: Text(
+                                            'Código do Cartão',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14),
+                                          )),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              FutureBuilder<RfidCardInfo?>(
+                                                future: cardsProvider.findCard(
+                                                    funcionario.codigo_cartao),
+                                                builder: (context, snapshot) {
+                                                  RfidCardInfo? card;
+                                                  try {
+                                                    card = snapshot.data;
+                                                  } catch (_) {
+                                                    card = null;
+                                                  }
+                                                  if (card == null) {
+                                                    return const Text(
+                                                        'Cartão não encontrado');
+                                                  }
+                                                  return SizedBox(
+                                                    width: 400,
+                                                    height: 220,
+                                                    child: RfidCardItem(
+                                                        cardInfo: card),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text("Fechar"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                _updateFuncionario(
+                                                    funcionario,
+                                                    codigoCartaoController
+                                                        .text);
+                                              },
+                                              child: const Text(
+                                                  'Salvar Alterações'),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: AppColors.primary,
+                                    side: const BorderSide(
+                                        color: AppColors.primary),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                ElevatedButton.icon(
+                                  icon: const Icon(Icons.delete),
+                                  label: const Text('Remover'),
+                                  onPressed: () =>
+                                      _deleteFuncionario(funcionario),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.error,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          ElevatedButton.icon(
-                            icon: const Icon(Icons.delete),
-                            label: const Text('Remover'),
-                            onPressed: () => _deleteFuncionario(funcionario),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.error,
-                              foregroundColor: Colors.white,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        });
+                    );
+                  },
+                );
+              }),
+        ),
+      ],
+    );
   }
 }
