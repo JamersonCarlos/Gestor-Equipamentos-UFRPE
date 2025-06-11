@@ -9,11 +9,22 @@ import '../core/config/env.dart';
 class ProjetorService {
     final String _baseUrl;
 
-  ProjetorService() : _baseUrl = '${Env.baseUrl}/equipamentos/';
+  ProjetorService() : _baseUrl = '${Env.baseUrl}/equipamentos';
 
   Future<List<Projetor>> getProjetores() async {
     final headers = await getHeaders();
     final response = await http.get(Uri.parse(_baseUrl), headers: headers);
+    
+    if (response.statusCode == 200) {
+      List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => Projetor.fromJson(json)).toList();
+    } else {
+      return [];
+    }
+  }
+    Future<List<Projetor>> getProjetoresNotInUse() async {
+    final headers = await getHeaders();
+    final response = await http.get(Uri.parse('$_baseUrl/nao_associados'), headers: headers);
     
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);

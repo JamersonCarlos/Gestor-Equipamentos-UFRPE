@@ -90,7 +90,7 @@ class ProjectorProvider extends ChangeNotifier {
   }
 
   Future<List<Map<String, dynamic>>> getProjectors() async {
-    final projectors = await _projetorService.getProjetores();
+    final projectors = await _projetorService.getProjetoresNotInUse();
     return projectors
         .map((projetor) => {
               'codigo_tombamento': projetor.codigo_tombamento,
