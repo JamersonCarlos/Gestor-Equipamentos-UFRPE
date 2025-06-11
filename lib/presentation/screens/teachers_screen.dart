@@ -22,6 +22,7 @@ class TeachersScreen extends StatefulWidget {
 
 class _TeachersScreenState extends State<TeachersScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _codigoCartaoController = TextEditingController();
   final _cursoIdController = TextEditingController();
@@ -40,6 +41,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
     if (_formKey.currentState!.validate()) {
       try {
         final funcionario = Funcionario(
+          nome: _nomeController.text,
           email: '${_emailController.text}@ufrpe.br',
           codigo_cartao: _codigoCartaoController.text,
           curso_id: int.parse(_cursoIdController.text),
@@ -52,6 +54,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
             backgroundColor: AppColors.primary,
           ),
         );
+        _nomeController.clear();
         _emailController.clear();
         _codigoCartaoController.clear();
         _cursoIdController.clear();
@@ -82,201 +85,222 @@ class _TeachersScreenState extends State<TeachersScreen> {
             decoration: const BoxDecoration(
               color: AppColors.background,
             ),
-            child: Center(
-              child: Card(
-                elevation: 4,
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 1600),
-                  padding: const EdgeInsets.only(
-                      top: 24, bottom: 10, left: 24, right: 24),
-                  child: Form(
-                    key: _formKey,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 80, // Altura fixa para todos os campos
-                            child: TextFormField(
-                              controller: _emailController,
-                              decoration: _buildInputDecoration(
-                                'Email',
-                                'Digite o email do professor',
-                              ).copyWith(
-                                suffixText: '@ufrpe.br',
+            child: Card(
+              elevation: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 1600),
+                    padding:
+                        const EdgeInsets.only(top: 24, left: 24, right: 24),
+                    child: Form(
+                      key: _formKey,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 80,
+                              child: TextFormField(
+                                controller: _nomeController,
+                                decoration: _buildInputDecoration(
+                                  'Nome',
+                                  'Digite o nome do professor',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Por favor, digite o nome';
+                                  }
+                                  return null;
+                                },
                               ),
-                              keyboardType: TextInputType.emailAddress,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-zA-Z0-9._%-]')),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: SizedBox(
+                              height: 80, // Altura fixa para todos os campos
+                              child: TextFormField(
+                                controller: _emailController,
+                                decoration: _buildInputDecoration(
+                                  'Email',
+                                  'Digite o email do professor',
+                                ).copyWith(
+                                  suffixText: '@ufrpe.br',
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-zA-Z0-9._%-]')),
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Por favor, digite o email';
+                                  }
+                                  // Regex para validar apenas o usuário do email (sem domínio)
+                                  final userRegex =
+                                      RegExp(r'^[a-zA-Z0-9._%-]+$');
+                                  if (!userRegex.hasMatch(value.trim())) {
+                                    return 'Formato de email inválido';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: SizedBox(
+                              height: 80,
+                              child: FutureBuilder<List<RfidCardInfo>>(
+                                future: cardsProvider.getCardNotUsed(),
+                                builder: (context, snapshot) {
+                                  return DropdownButtonFormField<String>(
+                                    isExpanded: true,
+                                    value: _selectedCartao,
+                                    decoration: _buildInputDecoration(
+                                      'Cartão',
+                                      'Selecione o cartão do professor',
+                                    ),
+                                    items: snapshot.hasData
+                                        ? snapshot.data!
+                                            .map((RfidCardInfo card) {
+                                            return DropdownMenuItem<String>(
+                                              value: card.cardId,
+                                              child: Text(card.cardId),
+                                            );
+                                          }).toList()
+                                        : [],
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _selectedCartao = newValue;
+                                        _codigoCartaoController.text =
+                                            newValue ?? '';
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Por favor, selecione um cartão';
+                                      }
+                                      return null;
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: SizedBox(
+                              height: 80,
+                              child: FutureBuilder<List<Curso>>(
+                                future: cursosProvider.fetchCursos(),
+                                builder: (context, snapshot) {
+                                  return DropdownButtonFormField<String>(
+                                    isExpanded: true,
+                                    value: _selectedCurso,
+                                    decoration: _buildInputDecoration(
+                                      'Curso',
+                                      'Selecione o curso do professor',
+                                    ),
+                                    items: snapshot.hasData
+                                        ? snapshot.data!.map((Curso curso) {
+                                            return DropdownMenuItem<String>(
+                                              value: curso.curso_id.toString(),
+                                              child: Text(curso.nome),
+                                            );
+                                          }).toList()
+                                        : [],
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _selectedCurso = newValue;
+                                        _cursoIdController.text =
+                                            newValue ?? '';
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Por favor, selecione um cartão';
+                                      }
+                                      return null;
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: SizedBox(
+                              height: 80,
+                              child: FutureBuilder<List<Cargo>>(
+                                future: cargosProvider.fetchCargos(),
+                                builder: (context, snapshot) {
+                                  return DropdownButtonFormField<String>(
+                                    isExpanded: true,
+                                    value: _selectedCargo,
+                                    decoration: _buildInputDecoration(
+                                      'Cargo',
+                                      'Selecione o cargo do professor',
+                                    ),
+                                    items: snapshot.hasData
+                                        ? snapshot.data!.map((Cargo cargo) {
+                                            return DropdownMenuItem<String>(
+                                              value: cargo.id.toString(),
+                                              child: Text(cargo.nome),
+                                            );
+                                          }).toList()
+                                        : [],
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _selectedCargo = newValue;
+                                        _cargoIdController.text =
+                                            newValue ?? '';
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Por favor, selecione um cargo';
+                                      }
+                                      return null;
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          SizedBox(
+                            height: 80,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: _submitForm,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24),
+                                    minimumSize: const Size(
+                                        120, 56), // Altura fixa do botão
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Cadastrar',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
                               ],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor, digite o email';
-                                }
-                                // Regex para validar apenas o usuário do email (sem domínio)
-                                final userRegex = RegExp(r'^[a-zA-Z0-9._%-]+$');
-                                if (!userRegex.hasMatch(value.trim())) {
-                                  return 'Formato de email inválido';
-                                }
-                                return null;
-                              },
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: SizedBox(
-                            height: 80,
-                            child: FutureBuilder<List<RfidCardInfo>>(
-                              future: cardsProvider.getCardNotUsed(),
-                              builder: (context, snapshot) {
-                                return DropdownButtonFormField<String>(
-                                  isExpanded: true,
-                                  value: _selectedCartao,
-                                  decoration: _buildInputDecoration(
-                                    'Cartão',
-                                    'Selecione o cartão do professor',
-                                  ),
-                                  items: snapshot.hasData
-                                      ? snapshot.data!.map((RfidCardInfo card) {
-                                          return DropdownMenuItem<String>(
-                                            value: card.cardId,
-                                            child: Text(card.cardId),
-                                          );
-                                        }).toList()
-                                      : [],
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedCartao = newValue;
-                                      _codigoCartaoController.text =
-                                          newValue ?? '';
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Por favor, selecione um cartão';
-                                    }
-                                    return null;
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: SizedBox(
-                            height: 80,
-                            child: FutureBuilder<List<Curso>>(
-                              future: cursosProvider.fetchCursos(),
-                              builder: (context, snapshot) {
-                                return DropdownButtonFormField<String>(
-                                  isExpanded: true,
-                                  value: _selectedCurso,
-                                  decoration: _buildInputDecoration(
-                                    'Curso',
-                                    'Selecione o curso do professor',
-                                  ),
-                                  items: snapshot.hasData
-                                      ? snapshot.data!.map((Curso curso) {
-                                          return DropdownMenuItem<String>(
-                                            value: curso.curso_id.toString(),
-                                            child: Text(curso.nome),
-                                          );
-                                        }).toList()
-                                      : [],
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedCurso = newValue;
-                                      _cursoIdController.text = newValue ?? '';
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Por favor, selecione um cartão';
-                                    }
-                                    return null;
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: SizedBox(
-                            height: 80,
-                            child: FutureBuilder<List<Cargo>>(
-                              future: cargosProvider.fetchCargos(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                                return DropdownButtonFormField<String>(
-                                  isExpanded: true,
-                                  value: _selectedCargo,
-                                  decoration: _buildInputDecoration(
-                                    'Cargo',
-                                    'Selecione o cargo do professor',
-                                  ),
-                                  items: snapshot.hasData
-                                      ? snapshot.data!.map((Cargo cargo) {
-                                          return DropdownMenuItem<String>(
-                                            value: cargo.id.toString(),
-                                            child: Text(cargo.nome),
-                                          );
-                                        }).toList()
-                                      : [],
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedCargo = newValue;
-                                      _cargoIdController.text = newValue ?? '';
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Por favor, selecione um cargo';
-                                    }
-                                    return null;
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        SizedBox(
-                          height: 80,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              ElevatedButton(
-                                onPressed: _submitForm,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24),
-                                  minimumSize: const Size(
-                                      120, 56), // Altura fixa do botão
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Cadastrar',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
