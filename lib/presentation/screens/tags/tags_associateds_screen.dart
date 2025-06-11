@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/tags_provider.dart';
+import 'package:gestor_uso_projetores_ufrpe/presentation/screens/tags/widgets/add_tag_modal.dart';
 import 'package:provider/provider.dart';
 
 class TagInfo {
@@ -36,6 +38,7 @@ class _ElegantTagDashboardState extends State<ElegantTagDashboard> {
   @override
   Widget build(BuildContext context) {
     final tagsProvider = Provider.of<TagsProvider>(context);
+    final projectorProvider = Provider.of<ProjectorProvider>(context);
     return Scaffold(
       body: Row(
         children: [
@@ -67,6 +70,17 @@ class _ElegantTagDashboardState extends State<ElegantTagDashboard> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
+        onPressed: () {
+         showDialog(
+            context: context,
+            builder: (context) => AddTagModal(tagsProvider: tagsProvider, projectorProvider: projectorProvider),
+          );
+        },
+        child: const Icon(Icons.add),
+        tooltip: 'Adicionar tag',
       ),
     );
   }

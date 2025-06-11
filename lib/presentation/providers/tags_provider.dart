@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/rfid_tag.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/tags/tags_associateds_screen.dart';
 import 'package:gestor_uso_projetores_ufrpe/services/tag_service.dart';
 
@@ -31,5 +32,11 @@ class TagsProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> addTag(RfidTag tag) async {
+    await _tagService.addTag(tag);
+    fetchTags();
+    notifyListeners();
   }
 }

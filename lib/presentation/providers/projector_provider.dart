@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/uso_equipamento.dart';
+import 'package:gestor_uso_projetores_ufrpe/services/projetorService.dart';
 import 'package:gestor_uso_projetores_ufrpe/services/uso_equipamento_service.dart';
 import '../../domain/entities/projetor.dart';
 
 class ProjectorProvider extends ChangeNotifier {
   final UsoEquipamentoService _usoEquipamentoService = UsoEquipamentoService();
+  final ProjetorService _projetorService = ProjetorService();
   List<Projetor> _projectors = [];
   List<UsoEquipamento> _usos = [];
   bool _isLoading = false;
@@ -85,5 +87,15 @@ class ProjectorProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getProjectors() async {
+    final projectors = await _projetorService.getProjetores();
+    return projectors
+        .map((projetor) => {
+              'codigo_tombamento': projetor.codigo_tombamento,
+              'modelo': projetor.modelo,
+            })
+        .toList();
   }
 }
