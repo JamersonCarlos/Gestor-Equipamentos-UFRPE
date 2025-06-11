@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
@@ -76,11 +77,112 @@ class _FuncionariosListState extends State<FuncionariosList> {
     }
   }
 
+  final List<String> filters = [
+    'Ordem Alfabética A - Z',
+    'Ordem Alfabética Z - A',
+  ];
+
+  String selectedFilter = 'Ordem Alfabética A - Z';
+
+
   @override
   Widget build(BuildContext context) {
     CardsProvider cardsProvider = Provider.of<CardsProvider>(context);
     return Column(
       children: [
+        Container(
+          constraints: const BoxConstraints(maxWidth: 1600),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              
+              DropdownButtonHideUnderline(
+                child: DropdownButton2<String>(
+                  isExpanded: true,
+                  hint: const Row(
+                    children: [
+                      Icon(
+                        Icons.list,
+                        size: 16,
+                        color: Colors.yellow,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Select Item',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.yellow,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  items: filters
+                      .map((String item) => DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ))
+                      .toList(),
+                  value: selectedFilter,
+                  onChanged: (String? value) {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                  },
+                  buttonStyleData: ButtonStyleData(
+                    height: 50,
+                    width: 200,
+                    padding: const EdgeInsets.only(left: 14, right: 14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                  
+                      color: AppColors.primary,
+                    ),
+
+                  ),
+                  iconStyleData: const IconStyleData(
+                    icon: Icon(
+                      Icons.arrow_forward_ios_outlined,
+                    ),
+                    iconSize: 14,
+                    iconEnabledColor: AppColors.surface,
+                    iconDisabledColor: Colors.grey,
+                  ),
+                  dropdownStyleData: DropdownStyleData(
+                    maxHeight: 200,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      color: AppColors.textLight,
+                    ),
+                    scrollbarTheme: ScrollbarThemeData(
+                      radius: const Radius.circular(40),
+                      thickness: MaterialStateProperty.all<double>(6),
+                      thumbVisibility: MaterialStateProperty.all<bool>(true),
+                    ),
+                  ),
+                  menuItemStyleData: const MenuItemStyleData(
+                    height: 40,
+                    padding: EdgeInsets.only(left: 14, right: 14),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: FutureBuilder(
               future: _funcionarioService.getFuncionarios(),

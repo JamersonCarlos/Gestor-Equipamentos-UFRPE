@@ -79,7 +79,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
     final cargosProvider = Provider.of<CargosProvider>(context);
     return Scaffold(
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             decoration: const BoxDecoration(
@@ -88,7 +88,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
             child: Card(
               elevation: 4,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     constraints: const BoxConstraints(maxWidth: 1600),
