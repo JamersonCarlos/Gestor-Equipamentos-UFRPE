@@ -29,21 +29,25 @@ class _DashboardHeaderState extends State<DashboardHeader> {
               title: 'Total Loans',
               value: emprestimosDiaProvider.emprestimosPorDia.length.toString(),
               icon: Icons.account_tree_rounded,
+              color: Colors.purple,
             ),
             StatCard(
               title: 'Most Active Day',
               value: diaMaisAtivo,
               icon: Icons.calendar_month,
+              color: Colors.purple,
             ),
             const StatCard(
               title: 'Most Active Teacher',
               value: 'Michael Johnson',
               icon: Icons.person,
+              color: Colors.purple,
             ),
             const StatCard(
               title: 'Most Active Teacher',
               value: 'Michael Johnson',
               icon: Icons.person,
+              color: Colors.purple,
             ),
           ],
         );
@@ -56,12 +60,14 @@ class StatCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData? icon;
+  final Color color;
 
   const StatCard({
     super.key,
     required this.title,
     required this.value,
     this.icon,
+    required this.color,
   });
 
   @override
@@ -92,7 +98,7 @@ class StatCard extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 CircleAvatar(
-                  backgroundColor: Colors.grey.shade100,
+                  backgroundColor: color,
                   child: Icon(icon),
                 ),
                 const SizedBox(width: 8),
