@@ -45,9 +45,6 @@ class _AddTagModalState extends State<AddTagModal> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.projectorProvider.getProjectors().then((projectors) {
         setState(() {
-          if (projectors.isEmpty) {
-            Navigator.of(context).pop();
-          }
           equipamentos = projectors;
         });
       });
@@ -84,6 +81,28 @@ class _AddTagModalState extends State<AddTagModal> {
         ],
       );
     }
+
+    if (equipamentos.isEmpty) {
+      return AlertDialog(
+        title: const Text('Nenhum equipamento encontrado'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 300,
+              child: Lottie.asset('assets/animations/not-found.json'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      );
+    }
+
     return AlertDialog(
       title: const Text('Adicionar nova tag  RFID'),
       content: SingleChildScrollView(

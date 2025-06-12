@@ -62,6 +62,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/animations/scanner_card.json
+    - assets/animations/not-found.json
     - assets/img/Brasão_UFRPE.png
 
   # The following line ensures that the Material Icons font is
