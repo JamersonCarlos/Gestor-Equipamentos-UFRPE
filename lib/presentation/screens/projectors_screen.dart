@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/projetores_list.dart';
+import 'package:gestor_uso_projetores_ufrpe/utils/inputDecoration.dart';
 import '../../domain/entities/projetor.dart';
 import '../../services/projetorService.dart';
 import '../../core/theme/app_colors.dart';
@@ -14,7 +15,6 @@ class ProjectorsScreen extends StatefulWidget {
 class _ProjectorsScreenState extends State<ProjectorsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _projetorService = ProjetorService();
-
 
   // Controladores para os campos do formulário
   final _nomeController = TextEditingController();
@@ -33,26 +33,24 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
           modelo: _modeloController.text,
           marca: _marcaController.text,
           cor: _corController.text,
-          codigo_tombamento: _tombamentoController.text, // Adicione o novo campo
+          codigo_tombamento:
+              _tombamentoController.text, // Adicione o novo campo
         );
 
         await _projetorService.addProjetor(projetor);
-        
+
         _nomeController.clear();
         _modeloController.clear();
         _marcaController.clear();
         _corController.clear();
         _tombamentoController.clear(); // Limpe o novo campo
-        setState(() {
-          
-        });
+        setState(() {});
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Projetor adicionado com sucesso!'),
             backgroundColor: AppColors.primary,
           ),
         );
-
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -62,7 +60,7 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
         );
       }
     }
-    }
+  }
 
   String? _selectedMarca;
 
@@ -101,7 +99,8 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
                 elevation: 4,
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 1600),
-                  padding: const EdgeInsets.only(top: 24, bottom: 10, left: 24, right: 24),
+                  padding: const EdgeInsets.only(
+                      top: 24, bottom: 10, left: 24, right: 24),
                   child: Form(
                     key: _formKey,
                     child: Row(
@@ -111,9 +110,10 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
                             height: 80,
                             child: TextFormField(
                               controller: _tombamentoController,
-                              decoration: _buildInputDecoration(
+                              decoration: buildInputDecoration(
                                 'Código de Tombamento',
                                 'Digite o código de tombamento',
+                                null,
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -130,9 +130,10 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
                             height: 80,
                             child: DropdownButtonFormField<String>(
                               value: _selectedMarca,
-                              decoration: _buildInputDecoration(
+                              decoration: buildInputDecoration(
                                 'Marca',
                                 'Selecione a marca do projetor',
+                                null,
                               ),
                               items: _marcas.map((String marca) {
                                 return DropdownMenuItem<String>(
@@ -161,9 +162,10 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
                             height: 80,
                             child: TextFormField(
                               controller: _modeloController,
-                              decoration: _buildInputDecoration(
+                              decoration: buildInputDecoration(
                                 'Modelo',
                                 'Digite o modelo do projetor',
+                                null,
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -180,9 +182,10 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
                             height: 80,
                             child: DropdownButtonFormField<String>(
                               value: _selectedCor,
-                              decoration: _buildInputDecoration(
+                              decoration: buildInputDecoration(
                                 'Cor',
                                 'Selecione a cor do projetor',
+                                null,
                               ),
                               items: _cores.map((String cor) {
                                 return DropdownMenuItem<String>(
@@ -216,7 +219,8 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24),
                                   minimumSize: const Size(120, 56),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -238,42 +242,13 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          Expanded(child: 
-            ProjetoresList(onListUpdated: () { 
-              setState(() {
-                
-              });
-            },)
-          ),
+          Expanded(child: ProjetoresList(
+            onListUpdated: () {
+              setState(() {});
+            },
+          )),
         ],
       ),
     );
   }
-}
-
-InputDecoration _buildInputDecoration(String label, String hint) {
-  return InputDecoration(
-    labelText: label,
-    hintText: hint,
-    filled: true,
-    fillColor: AppColors.surface,
-    labelStyle: const TextStyle(color: AppColors.primary),
-    hintStyle: TextStyle(color: AppColors.textLight.withOpacity(0.6)),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.primary),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: AppColors.primary.withOpacity(0.5)),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.primary, width: 2),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.error),
-    ),
-  );
 }

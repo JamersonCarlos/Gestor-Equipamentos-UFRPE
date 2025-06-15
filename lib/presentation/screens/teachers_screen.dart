@@ -7,6 +7,7 @@ import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provide
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cargos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cursos_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/funcionarios_list.dart';
+import 'package:gestor_uso_projetores_ufrpe/utils/inputDecoration.dart';
 import 'package:provider/provider.dart';
 import '../../services/funcionarioService.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
@@ -103,10 +104,8 @@ class _TeachersScreenState extends State<TeachersScreen> {
                               height: 80,
                               child: TextFormField(
                                 controller: _nomeController,
-                                decoration: _buildInputDecoration(
-                                  'Nome',
-                                  'Digite o nome do professor',
-                                ),
+                                decoration: buildInputDecoration(
+                                    'Nome', 'Digite o nome do professor', null),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Por favor, digite o nome';
@@ -122,10 +121,9 @@ class _TeachersScreenState extends State<TeachersScreen> {
                               height: 80, // Altura fixa para todos os campos
                               child: TextFormField(
                                 controller: _emailController,
-                                decoration: _buildInputDecoration(
-                                  'Email',
-                                  'Digite o email do professor',
-                                ).copyWith(
+                                decoration: buildInputDecoration('Email',
+                                        'Digite o email do professor', null)
+                                    .copyWith(
                                   suffixText: '@ufrpe.br',
                                 ),
                                 keyboardType: TextInputType.emailAddress,
@@ -158,10 +156,10 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   return DropdownButtonFormField<String>(
                                     isExpanded: true,
                                     value: _selectedCartao,
-                                    decoration: _buildInputDecoration(
-                                      'Cartão',
-                                      'Selecione o cartão do professor',
-                                    ),
+                                    decoration: buildInputDecoration(
+                                        'Cartão',
+                                        'Selecione o cartão do professor',
+                                        null),
                                     items: snapshot.hasData
                                         ? snapshot.data!
                                             .map((RfidCardInfo card) {
@@ -199,9 +197,10 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   return DropdownButtonFormField<String>(
                                     isExpanded: true,
                                     value: _selectedCurso,
-                                    decoration: _buildInputDecoration(
+                                    decoration: buildInputDecoration(
                                       'Curso',
                                       'Selecione o curso do professor',
+                                      null,
                                     ),
                                     items: snapshot.hasData
                                         ? snapshot.data!.map((Curso curso) {
@@ -239,10 +238,8 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   return DropdownButtonFormField<String>(
                                     isExpanded: true,
                                     value: _selectedCargo,
-                                    decoration: _buildInputDecoration(
-                                      'Cargo',
-                                      'Selecione o cargo do professor',
-                                    ),
+                                    decoration: buildInputDecoration('Cargo',
+                                        'Selecione o cargo do professor', null),
                                     items: snapshot.hasData
                                         ? snapshot.data!.map((Cargo cargo) {
                                             return DropdownMenuItem<String>(
@@ -314,31 +311,4 @@ class _TeachersScreenState extends State<TeachersScreen> {
       ),
     );
   }
-}
-
-InputDecoration _buildInputDecoration(String label, String hint) {
-  return InputDecoration(
-    labelText: label,
-    hintText: hint,
-    filled: true,
-    fillColor: AppColors.surface,
-    labelStyle: const TextStyle(color: AppColors.primary),
-    hintStyle: TextStyle(color: AppColors.textLight.withOpacity(0.6)),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.primary),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: AppColors.primary.withOpacity(0.5)),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.primary, width: 2),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.error),
-    ),
-  );
 }
