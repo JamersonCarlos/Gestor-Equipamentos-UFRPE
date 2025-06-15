@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
+import 'package:gestor_uso_projetores_ufrpe/utils/inputDecoration.dart';
 import 'package:provider/provider.dart';
 import '../../domain/entities/funcionario.dart';
 import '../../core/theme/app_colors.dart';
@@ -21,10 +22,7 @@ class FuncionariosList extends StatefulWidget {
 class _FuncionariosListState extends State<FuncionariosList> {
   final _funcionarioService = FuncionarioService();
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  // Removed duplicate initState
 
   Future<void> _updateFuncionario(
       Funcionario funcionario, String novoCodigoCartao) async {
@@ -77,30 +75,51 @@ class _FuncionariosListState extends State<FuncionariosList> {
     }
   }
 
+  Future<List<Funcionario>> _fetchFuncionarios() async {
+    try {
+      final funcionarios = await _funcionarioService.getFuncionarios();
+      _todosFuncionarios = funcionarios;
+      _funcionariosFiltrados = funcionarios;
+      return funcionarios;
+    } catch (e) {
+      throw Exception('Erro ao buscar professores: $e');
+    }
+  }
+
+  void _filtrarFuncionarios(String selectedFilter) {
+    String filtro = _nomeController.text.toLowerCase();
+
+    if (selectedFilter == 'Ordem Alfabética A - Z') {
+      _funcionariosFiltrados = _todosFuncionarios
+          .where((f) => f.nome.toLowerCase().contains(filtro))
+          .toList()
+        ..sort((a, b) => a.nome.compareTo(b.nome));
+    } else if (selectedFilter == 'Ordem Alfabética Z - A') {
+      _funcionariosFiltrados = _todosFuncionarios
+          .where((f) => f.nome.toLowerCase().contains(filtro))
+          .toList()
+        ..sort((a, b) => b.nome.compareTo(a.nome));
+    }
+  }
+
   final List<String> filters = [
     'Ordem Alfabética A - Z',
     'Ordem Alfabética Z - A',
   ];
 
-  List<Funcionario>? _funcionarios; 
-  List<Funcionario> filteredFuncionarios = [];
+  Future<List<Funcionario>>? _futureFuncionarios;
+  List<Funcionario> _todosFuncionarios = [];
+  List<Funcionario> _funcionariosFiltrados = [];
+
   String selectedFilter = 'Ordem Alfabética A - Z';
 
   final TextEditingController _nomeController = TextEditingController();
 
-
-  void _filtrarFuncionarios() {
-    String filtro = _nomeController.text.toLowerCase();
-
-    if(_funcionarios != null) { 
-      setState(() {
-        filteredFuncionarios = _funcionarios!.where((func) {
-          return func.nome.toLowerCase().contains(filtro);
-        }).toList();
-      });
-    }
-   }
-
+  @override
+  void initState() {
+    super.initState();
+    _futureFuncionarios = _fetchFuncionarios();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,25 +133,19 @@ class _FuncionariosListState extends State<FuncionariosList> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-                SizedBox(
-                  width: 400,
-                  child: TextFormField(
-                    controller: _nomeController,
-                    decoration: _buildInputDecoration(
-                      'Nome',
-                      'Digite o nome do professor',
-                    ).copyWith(
-                      suffixIcon: const Icon(Icons.search, color: AppColors.primary),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor, digite o nome';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) => _filtrarFuncionarios(),
+              SizedBox(
+                width: 400,
+                child: TextFormField(
+                  controller: _nomeController,
+                  decoration: buildInputDecoration(
+                    'Nome',
+                    'Digite o nome do professor',
+                    const Icon(Icons.search,
+                        color: AppColors.primary, size: 24),
                   ),
-                ),     
+                  onChanged: (value) => _filtrarFuncionarios(selectedFilter),
+                ),
+              ),
               DropdownButtonHideUnderline(
                 child: DropdownButton2<String>(
                   isExpanded: true,
@@ -175,9 +188,11 @@ class _FuncionariosListState extends State<FuncionariosList> {
                       .toList(),
                   value: selectedFilter,
                   onChanged: (String? value) {
+                    if (value == null) return;
                     setState(() {
-                      selectedFilter = value!;
+                      selectedFilter = value;
                     });
+                    _filtrarFuncionarios(value);
                   },
                   buttonStyleData: ButtonStyleData(
                     height: 50,
@@ -185,10 +200,8 @@ class _FuncionariosListState extends State<FuncionariosList> {
                     padding: const EdgeInsets.only(left: 14, right: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(14),
-                  
                       color: AppColors.primary,
                     ),
-
                   ),
                   iconStyleData: const IconStyleData(
                     icon: Icon(
@@ -220,9 +233,10 @@ class _FuncionariosListState extends State<FuncionariosList> {
             ],
           ),
         ),
+        const SizedBox(height: 10),
         Expanded(
           child: FutureBuilder(
-              future: _funcionarioService.getFuncionarios(),
+              future: _futureFuncionarios,
               builder: (context, asyncSnapshot) {
                 if (asyncSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -234,18 +248,14 @@ class _FuncionariosListState extends State<FuncionariosList> {
                       child: Text('Nenhum professor cadastrado.'));
                 }
 
-                setState(() {
-                  _funcionarios = asyncSnapshot.data!;
-                  filteredFuncionarios = _funcionarios!;
-                });
                 return ListView.builder(
-                  itemCount: filteredFuncionarios.length,
+                  itemCount: _funcionariosFiltrados.length,
                   itemBuilder: (context, index) {
-                    final funcionario = filteredFuncionarios[index];
+                    final funcionario = _funcionariosFiltrados[index];
                     return Card(
                       elevation: 4,
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                          horizontal: 5, vertical: 8),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
@@ -377,29 +387,4 @@ class _FuncionariosListState extends State<FuncionariosList> {
     );
   }
 }
-InputDecoration _buildInputDecoration(String label, String hint) {
-  return InputDecoration(
-    labelText: label,
-    hintText: hint,
-    filled: true,
-    fillColor: AppColors.surface,
-    labelStyle: const TextStyle(color: AppColors.primary),
-    hintStyle: TextStyle(color: AppColors.textLight.withOpacity(0.6)),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.primary),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: AppColors.primary.withOpacity(0.5)),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.primary, width: 2),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.error),
-    ),
-  );
-}
+
