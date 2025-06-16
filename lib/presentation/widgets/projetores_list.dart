@@ -41,7 +41,20 @@ class _ProjetoresListState extends State<ProjetoresList> {
   List<Projetor> _todosProjetores = [];
   List<Projetor> _projetoresFiltrados = [];
 
-  TextEditingController _codigoTombController = TextEditingController();
+  final TextEditingController _codigoTombController = TextEditingController();
+
+  String? _selectedMarca;
+
+  // Listas de opções para os dropdown
+  final List<String> _marcas = [
+    'Epson',
+    'BenQ',
+    'ViewSonic',
+    'Optoma',
+    'Sony',
+    'LG',
+    'Acer',
+  ];
 
   Future<List<Projetor>> fetchProjetores() async {
     try {
@@ -59,7 +72,7 @@ class _ProjetoresListState extends State<ProjetoresList> {
     }
   }
 
-  void _filterProjetores() {
+  void _filterProjetores(String? selectedMarca) {
     if (_codigoTombController.text.isEmpty) {
       setState(() {
         _projetoresFiltrados = _todosProjetores;
@@ -70,6 +83,9 @@ class _ProjetoresListState extends State<ProjetoresList> {
             .where((projetor) => projetor.codigo_tombamento
                 .toLowerCase()
                 .contains(_codigoTombController.text.toLowerCase()))
+            .where(selectedMarca == null
+                ? (projetor) => true
+                : (projetor) => projetor.marca == selectedMarca)
             .toList();
       });
     }
@@ -88,6 +104,38 @@ class _ProjetoresListState extends State<ProjetoresList> {
         Container(
           constraints: const BoxConstraints(maxWidth: 1600),
           child: Row(
+            spacing: 10,
+            children: [
+              const Text(
+                'Filtros de Projetores',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+              const Expanded(
+                  child: Divider(
+                color: AppColors.primary,
+                thickness: 2,
+              )),
+              Text(
+                '${_projetoresFiltrados.length}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 15),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 1600),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            spacing: 10,
             children: [
               SizedBox(
                 width: 400,
@@ -99,7 +147,38 @@ class _ProjetoresListState extends State<ProjetoresList> {
                     const Icon(Icons.search,
                         color: AppColors.primary, size: 24),
                   ),
-                  onChanged: (value) => _filterProjetores(),
+                  onChanged: (value) => _filterProjetores(_selectedMarca),
+                ),
+              ),
+              SizedBox(
+                width: 300,
+                child: Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedMarca,
+                    decoration: buildInputDecoration(
+                      'Marca',
+                      'Selecione a marca do projetor',
+                      null,
+                    ),
+                    items: _marcas.map((String marca) {
+                      return DropdownMenuItem<String>(
+                        value: marca,
+                        child: Text(marca),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedMarca = newValue;
+                        _filterProjetores(newValue);
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, selecione a marca';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
               ),
             ],
@@ -271,4 +350,3 @@ class _ProjetoresListState extends State<ProjetoresList> {
     );
   }
 }
-
