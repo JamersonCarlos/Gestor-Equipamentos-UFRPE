@@ -95,25 +95,41 @@ class _FuncionariosListState extends State<FuncionariosList> {
     String filtro = _nomeController.text.toLowerCase();
 
     if (selectedFilter == 'Ordem Alfabética A - Z') {
-      _funcionariosFiltrados = _todosFuncionarios
-          .where((f) => f.nome.toLowerCase().contains(filtro))
-          .toList()
-        ..sort((a, b) => a.nome.compareTo(b.nome));
+      setState(() {
+        _funcionariosFiltrados = _todosFuncionarios
+            .where((f) => f.nome.toLowerCase().contains(filtro))
+            .toList()
+          ..sort((a, b) => a.nome.compareTo(b.nome));
+      });
     } else if (selectedFilter == 'Ordem Alfabética Z - A') {
-      _funcionariosFiltrados = _todosFuncionarios
-          .where((f) => f.nome.toLowerCase().contains(filtro))
-          .toList()
-        ..sort((a, b) => b.nome.compareTo(a.nome));
+      setState(() {
+        _funcionariosFiltrados = _todosFuncionarios
+            .where((f) => f.nome.toLowerCase().contains(filtro))
+            .toList()
+          ..sort((a, b) => b.nome.compareTo(a.nome));
+      });
+    }
+
+    if (filtro.isNotEmpty) {
+      setState(() {
+        _funcionariosFiltrados = _todosFuncionarios
+            .where((f) => f.nome.toLowerCase().contains(filtro))
+            .toList();
+      });
     }
     if (selectedCurso.isNotEmpty) {
-      _funcionariosFiltrados = _funcionariosFiltrados
-          .where((f) => f.curso_id.toString() == selectedCurso)
-          .toList();
+      setState(() {
+        _funcionariosFiltrados = _funcionariosFiltrados
+            .where((f) => f.curso_id.toString() == selectedCurso)
+            .toList();
+      });
     }
     if (selectedCargo != null && selectedCargo.isNotEmpty) {
-      _funcionariosFiltrados = _funcionariosFiltrados
-          .where((f) => f.cargo_id.toString() == selectedCargo)
-          .toList();
+      setState(() {
+        _funcionariosFiltrados = _funcionariosFiltrados
+            .where((f) => f.cargo_id.toString() == selectedCargo)
+            .toList();
+      });
     }
   }
 
