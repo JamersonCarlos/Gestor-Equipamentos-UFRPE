@@ -29,7 +29,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
   final _cursoIdController = TextEditingController();
   final _cargoIdController = TextEditingController();
   final _funcionarioService = FuncionarioService();
-  String? _selectedCartao;
+  // String? _selectedCartao;
   String? _selectedCurso;
   String? _selectedCargo;
 
@@ -42,7 +42,8 @@ class _TeachersScreenState extends State<TeachersScreen> {
     if (_formKey.currentState!.validate()) {
       try {
         final funcionario = Funcionario(
-          nome: _nomeController.text,
+          id: 0,
+          nome: _nomeController.text, 
           email: '${_emailController.text}@ufrpe.br',
           codigo_cartao: _codigoCartaoController.text,
           curso_id: int.parse(_cursoIdController.text),
@@ -147,46 +148,46 @@ class _TeachersScreenState extends State<TeachersScreen> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          Expanded(
-                            child: SizedBox(
-                              height: 80,
-                              child: FutureBuilder<List<RfidCardInfo>>(
-                                future: cardsProvider.getCardNotUsed(),
-                                builder: (context, snapshot) {
-                                  return DropdownButtonFormField<String>(
-                                    isExpanded: true,
-                                    value: _selectedCartao,
-                                    decoration: buildInputDecoration(
-                                        'Cartão',
-                                        'Selecione o cartão do professor',
-                                        null),
-                                    items: snapshot.hasData
-                                        ? snapshot.data!
-                                            .map((RfidCardInfo card) {
-                                            return DropdownMenuItem<String>(
-                                              value: card.cardId,
-                                              child: Text(card.cardId),
-                                            );
-                                          }).toList()
-                                        : [],
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _selectedCartao = newValue;
-                                        _codigoCartaoController.text =
-                                            newValue ?? '';
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, selecione um cartão';
-                                      }
-                                      return null;
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
+                          // Expanded(
+                          //   child: SizedBox(
+                          //     height: 80,
+                          //     child: FutureBuilder<List<RfidCardInfo>>(
+                          //       future: cardsProvider.getCardNotUsed(),
+                          //       builder: (context, snapshot) {
+                          //         return DropdownButtonFormField<String>(
+                          //           isExpanded: true,
+                          //           value: _selectedCartao,
+                          //           decoration: buildInputDecoration(
+                          //               'Cartão',
+                          //               'Selecione o cartão do professor',
+                          //               null),
+                          //           items: snapshot.hasData
+                          //               ? snapshot.data!
+                          //                   .map((RfidCardInfo card) {
+                          //                   return DropdownMenuItem<String>(
+                          //                     value: card.cardId,
+                          //                     child: Text(card.cardId),
+                          //                   );
+                          //                 }).toList()
+                          //               : [],
+                          //           onChanged: (String? newValue) {
+                          //             setState(() {
+                          //               _selectedCartao = newValue;
+                          //               _codigoCartaoController.text =
+                          //                   newValue ?? '';
+                          //             });
+                          //           },
+                          //           validator: (value) {
+                          //             if (value == null || value.isEmpty) {
+                          //               return 'Por favor, selecione um cartão';
+                          //             }
+                          //             return null;
+                          //           },
+                          //         );
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: SizedBox(

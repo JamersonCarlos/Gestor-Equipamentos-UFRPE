@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/funcionario.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
 import 'package:gestor_uso_projetores_ufrpe/services/card_service.dart';
+import 'package:gestor_uso_projetores_ufrpe/services/funcionarioService.dart';
 
 class CardsProvider extends ChangeNotifier {
   final CardService _cardService = CardService();
+  final FuncionarioService _funcionarioService = FuncionarioService();
   List<RfidCardInfo> _rfidCards = [];
   bool _isInitialized = false;
 
@@ -40,6 +43,7 @@ class CardsProvider extends ChangeNotifier {
         accessLevel: card.nivelAcesso,
         lastSeen: card.ultimaEntrada.toString(),
         label: card.nivelAcesso.label,
+        funcionarioId: 0,
       );
     } catch (e) {
       print('Erro ao buscar cartão: $e');
@@ -58,6 +62,7 @@ class CardsProvider extends ChangeNotifier {
               accessLevel: json.nivelAcesso,
               lastSeen: json.ultimaEntrada.toString(),
               label: json.nivelAcesso.label,
+              funcionarioId: json.funcionarioId,
             ),
           )
           .toList();
@@ -65,6 +70,11 @@ class CardsProvider extends ChangeNotifier {
     } catch (e) {
       print('Erro ao buscar cartões: $e');
     }
+  }
+
+  Future<List<Funcionario>> getFuncionariosSemCartao() async {
+    final funcionarios = await _funcionarioService.getFuncionariosSemCartao();
+    return funcionarios;
   }
 
   Future<List<RfidCardInfo>> getCardNotUsed() async {
@@ -76,9 +86,10 @@ class CardsProvider extends ChangeNotifier {
               id: json.id.toString(),
               cardId: json.rfid,
               accessLevel: json.nivelAcesso,
-              lastSeen: json.ultimaEntrada.toString(),
+              lastSeen: json.ultimaEntrada?.toString(),
               label: json.nivelAcesso.label,
-            ),
+              funcionarioId: json.funcionarioId,
+            ),  
           )
           .toList();
     } catch (e) {

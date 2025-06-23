@@ -9,7 +9,7 @@ import '../core/config/env.dart';
 class FuncionarioService {
   final String _baseUrl;
 
-  FuncionarioService() : _baseUrl = '${Env.baseUrl}/funcionarios/';
+  FuncionarioService() : _baseUrl = '${Env.baseUrl}/funcionarios';
 
   Future<List<Funcionario>> getFuncionarios() async {
     try {
@@ -53,6 +53,14 @@ class FuncionarioService {
     } catch (e) {
       throw Exception('Erro ao deletar funcionário: $e');
     }
+  }
+  Future<List<Funcionario>> getFuncionariosSemCartao() async {
+    final response = await http.get(Uri.parse('$_baseUrl/nao_associados'), headers: await getHeaders());
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map<Funcionario>((json) => Funcionario.fromJson(json)).toList();
+    }
+    return [];
   }
 
   Future<void> updateFuncionario(Funcionario funcionario) async {

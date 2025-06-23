@@ -7,13 +7,14 @@ class RfidCardInfo {
   final String label;
   final AccessLevel accessLevel;
   String? lastSeen;
-
+  final int funcionarioId;
   RfidCardInfo({
     required this.id,
     required this.cardId,
     required this.accessLevel,
     this.lastSeen,
     required this.label,
+    required this.funcionarioId,
   });
 }
 

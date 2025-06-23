@@ -73,6 +73,7 @@ class CardService {
           'nome': card.label,
           'nivel_acesso': card.accessLevel.value,
           'status': card.accessLevel.label,
+          'funcionario_id': card.funcionarioId,
         }),
       );
       if (response.statusCode != 200 &&

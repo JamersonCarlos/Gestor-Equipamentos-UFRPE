@@ -7,7 +7,7 @@ class RfidCard {
   final String status;
   final DateTime? ultimaEntrada;
   final int id;
-
+  final int funcionarioId;
   RfidCard({
     required this.nome,
     required this.rfid,
@@ -15,6 +15,7 @@ class RfidCard {
     required this.status,
     required this.ultimaEntrada,
     required this.id,
+    required this.funcionarioId,
   });
 
   factory RfidCard.fromJson(Map<String, dynamic> json) {
@@ -27,6 +28,7 @@ class RfidCard {
           ? DateTime.parse(json['ultima_entrada'] as String)
           : null,
       id: json['id'] as int,
+      funcionarioId: json['funcionario_id'] != null ? json['funcionario_id'] as int : 0,
     );
   }
 
@@ -38,6 +40,7 @@ class RfidCard {
       'status': status,
       'ultima_entrada': ultimaEntrada?.toIso8601String(),
       'id': id,
+      'funcionario_id': funcionarioId,
     };
   }
 }

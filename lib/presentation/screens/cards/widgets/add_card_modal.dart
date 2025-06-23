@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/core/constants/access_level.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/funcionario.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -18,9 +19,11 @@ class _AddCardModalState extends State<AddCardModal> {
   final _formKey = GlobalKey<FormState>();
   String cardId = '';
   String label = '';
+  Funcionario funcionario = Funcionario(id: 0, nome: '', email: '', codigo_cartao: '', curso_id: 0, cargo_id: 0);
   AccessLevel accessLevel = AccessLevel.admin;
   bool waitingForCard = true;
   WebSocketChannel? _channel;
+  List<Funcionario> funcionarios = [];
 
   @override
   void initState() {
@@ -40,6 +43,13 @@ class _AddCardModalState extends State<AddCardModal> {
           });
         }
       } catch (_) {}
+    });
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.cardsProvider.getFuncionariosSemCartao().then((data) {
+        setState(() {
+          funcionarios = data;
+        });
+      });
     });
   }
 
@@ -73,6 +83,26 @@ class _AddCardModalState extends State<AddCardModal> {
         ],
       );
     }
+    if (funcionarios.isEmpty) {
+      return AlertDialog(
+        title: const Text('Nenhum funcionário encontrado'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 300,
+              child: Lottie.asset('assets/animations/not-found.json'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      );
+    }
     return AlertDialog(
       title: const Text('Adicionar novo cartão RFID'),
       content: SingleChildScrollView(
@@ -93,6 +123,15 @@ class _AddCardModalState extends State<AddCardModal> {
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe o nome' : null,
                 onSaved: (value) => label = value!,
+              ),
+              DropdownButtonFormField<Funcionario>(
+                value: funcionarios.first,
+                decoration: const InputDecoration(labelText: 'Funcionário'),
+                items: funcionarios.map<DropdownMenuItem<Funcionario>>((opt) => DropdownMenuItem<Funcionario>(
+                  value: opt,
+                  child: Text(opt.nome),
+                )).toList(),
+                onChanged: (value) => setState(() => funcionario = value!),
               ),
               DropdownButtonFormField<AccessLevel>(
                 value: AccessLevel.values.firstWhere(
@@ -134,6 +173,7 @@ class _AddCardModalState extends State<AddCardModal> {
                 accessLevel: accessLevel,
                 lastSeen: '',
                 label: accessLevel.label,
+                funcionarioId: funcionario.id,
               );
               widget.cardsProvider.addCard(newCard);
               Navigator.of(context).pop();

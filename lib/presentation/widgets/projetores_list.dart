@@ -184,6 +184,7 @@ class _ProjetoresListState extends State<ProjetoresList> {
             ],
           ),
         ),
+        const SizedBox(height: 15),
         Expanded(
           child: FutureBuilder(
               future: _futureProjetores,

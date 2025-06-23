@@ -32,6 +32,7 @@ class _FuncionariosListState extends State<FuncionariosList> {
       Funcionario funcionario, String novoCodigoCartao) async {
     try {
       final funcionarioAtualizado = Funcionario(
+        id: funcionario.id,
         email: funcionario.email,
         codigo_cartao: novoCodigoCartao,
         curso_id: funcionario.curso_id,
@@ -452,12 +453,6 @@ class _FuncionariosListState extends State<FuncionariosList> {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        TextEditingController
-                                            codigoCartaoController =
-                                            TextEditingController(
-                                                text:
-                                                    funcionario.codigo_cartao);
-
                                         return AlertDialog(
                                           title: const Center(
                                               child: Text(
@@ -499,16 +494,16 @@ class _FuncionariosListState extends State<FuncionariosList> {
                                                   Navigator.of(context).pop(),
                                               child: const Text("Fechar"),
                                             ),
-                                            TextButton(
-                                              onPressed: () {
-                                                _updateFuncionario(
-                                                    funcionario,
-                                                    codigoCartaoController
-                                                        .text);
-                                              },
-                                              child: const Text(
-                                                  'Salvar Alterações'),
-                                            )
+                                            // TextButton(
+                                            //   onPressed: () {
+                                            //     _updateFuncionario(
+                                            //         funcionario,
+                                            //         codigoCartaoController
+                                            //             .text);
+                                            //   },
+                                            //   child: const Text(
+                                            //       'Salvar Alterações'),
+                                            // )
                                           ],
                                         );
                                       },
