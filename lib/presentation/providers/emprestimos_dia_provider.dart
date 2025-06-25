@@ -56,4 +56,20 @@ class EmprestimosDiaProvider extends ChangeNotifier {
         ? professorMaisAtivo['professor'] ?? ''
         : '';
   }
+
+  Future<List<Map<String, dynamic>>> getUsosPendentesProvider() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      return await _service.getUsosPendentes();
+    } catch (e) {
+      debugPrint('Erro ao carregar empréstimos pendentes: $e');
+      return [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
+

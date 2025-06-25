@@ -32,8 +32,8 @@ class ProjectorProvider extends ChangeNotifier {
         'status': uso.status.value,
         'statusColor': uso.status.color,
         'id': equipamento['codigo_tombamento'] ?? 'N/A',
-        'out': _formatDate(uso.dataAluguel),
-        'in': uso.dataDevolucao != null
+        'in': _formatDate(uso.dataAluguel),
+        'out': uso.dataDevolucao != null
             ? _formatDate(uso.dataDevolucao!)
             : 'Pendente',
       };

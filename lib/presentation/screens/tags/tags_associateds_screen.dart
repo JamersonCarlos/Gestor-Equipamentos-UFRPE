@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/tags_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/screens/tags/widgets/add_tag_modal.dart';
+import 'package:gestor_uso_projetores_ufrpe/utils/format_date.util.dart';
 import 'package:provider/provider.dart';
 
 class TagInfo {
@@ -198,7 +199,7 @@ class TagListItem extends StatelessWidget {
                   style: const TextStyle(color: Colors.grey))),
           Expanded(
               flex: 3,
-              child: Text(tagInfo.lastActivity,
+              child: Text(formatRelativeDate(DateTime.parse(tagInfo.lastActivity)),
                   style: const TextStyle(color: Colors.grey))),
           Expanded(
             flex: 2,
