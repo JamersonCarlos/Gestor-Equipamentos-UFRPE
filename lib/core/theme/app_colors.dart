@@ -14,4 +14,5 @@ class AppColors {
   static const Color error = Color(0xFFD32F2F);
   static const Color success = Color(0xFF388E3C);
   static const Color warning = Color(0xFFF57C00);
+  static const Color warning400 = Color.fromARGB(85, 245, 123, 0);
 }

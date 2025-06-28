@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/defeito.dart';
+import 'package:gestor_uso_projetores_ufrpe/services/defeito_service.dart';
 import 'package:gestor_uso_projetores_ufrpe/utils/inputDecoration.dart';
 import '../../domain/entities/projetor.dart';
 import '../../core/theme/app_colors.dart';
 import '../../services/projetorService.dart';
 
 class ProjetoresList extends StatefulWidget {
-   final VoidCallback onListUpdated;
+  final VoidCallback onListUpdated;
 
-  const ProjetoresList({Key? key, required this.onListUpdated}) : super(key: key);
+  const ProjetoresList({Key? key, required this.onListUpdated})
+      : super(key: key);
 
   @override
   State<ProjetoresList> createState() => _ProjetoresListState();
@@ -15,6 +18,12 @@ class ProjetoresList extends StatefulWidget {
 
 class _ProjetoresListState extends State<ProjetoresList> {
   final _projetorService = ProjetorService();
+  final _defeitoService = DefeitoService();
+
+  void atualizarProjetores() {
+    setState(() {});
+    _futureProjetores = fetchProjetores();
+  }
 
   Future<void> _deleteProjetor(Projetor projetor) async {
     try {
@@ -26,11 +35,7 @@ class _ProjetoresListState extends State<ProjetoresList> {
         ),
       );
       setState(() {
-        fetchProjetores().then((_) {
-          if (widget.onListUpdated != null) {
-            widget.onListUpdated!();
-          }
-        });
+        widget.onListUpdated();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,6 +50,7 @@ class _ProjetoresListState extends State<ProjetoresList> {
   Future<List<Projetor>>? _futureProjetores;
   List<Projetor> _todosProjetores = [];
   List<Projetor> _projetoresFiltrados = [];
+  bool atualizarReparo = false;
 
   final TextEditingController _codigoTombController = TextEditingController();
 
@@ -152,33 +158,31 @@ class _ProjetoresListState extends State<ProjetoresList> {
               ),
               SizedBox(
                 width: 300,
-                child: Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedMarca,
-                    decoration: buildInputDecoration(
-                      'Marca',
-                      'Selecione a marca do projetor',
-                      null,
-                    ),
-                    items: _marcas.map((String marca) {
-                      return DropdownMenuItem<String>(
-                        value: marca,
-                        child: Text(marca),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedMarca = newValue;
-                        _filterProjetores(newValue);
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor, selecione a marca';
-                      }
-                      return null;
-                    },
+                child: DropdownButtonFormField<String>(
+                  value: _selectedMarca,
+                  decoration: buildInputDecoration(
+                    'Marca',
+                    'Selecione a marca do projetor',
+                    null,
                   ),
+                  items: _marcas.map((String marca) {
+                    return DropdownMenuItem<String>(
+                      value: marca,
+                      child: Text(marca),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedMarca = newValue;
+                      _filterProjetores(newValue);
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, selecione a marca';
+                    }
+                    return null;
+                  },
                 ),
               ),
             ],
@@ -205,6 +209,15 @@ class _ProjetoresListState extends State<ProjetoresList> {
                   itemBuilder: (context, index) {
                     final projetor = _projetoresFiltrados[index];
                     return Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: projetor.defeito != null
+                              ? AppColors.error
+                              : AppColors.background,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       elevation: 4,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -250,6 +263,22 @@ class _ProjetoresListState extends State<ProjetoresList> {
                             Row(
                               spacing: 10,
                               children: [
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    mostrarDialogoDefeito(
+                                      onDefeitoUpdated: atualizarProjetores,
+                                      context: context,
+                                      projetor: projetor,
+                                      defeitoService: _defeitoService,
+                                    );
+                                  },
+                                  icon: const Icon(Icons.warning),
+                                  label: const Text('Defeito'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.warning,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
                                 ElevatedButton.icon(
                                   onPressed: () {
                                     showDialog(
@@ -350,4 +379,154 @@ class _ProjetoresListState extends State<ProjetoresList> {
       ],
     );
   }
+}
+
+void mostrarDialogoDefeito({
+  required BuildContext context,
+  required Projetor projetor,
+  required DefeitoService defeitoService,
+  required VoidCallback onDefeitoUpdated,
+}) {
+  final TextEditingController descricaoController = TextEditingController(
+    text: projetor.defeito?.descricao ?? '',
+  );
+
+  bool atualizarReparo = false;
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.warning, color: AppColors.error),
+                SizedBox(width: 10),
+                Text(
+                  'Registrar Defeito',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+            content: TextFormField(
+              controller: descricaoController,
+              maxLines: 5,
+              minLines: 3,
+              keyboardType: TextInputType.multiline,
+              decoration: buildInputDecoration(
+                'Descrição do defeito',
+                'Descreva o defeito do projetor',
+                null,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  atualizarReparo = true;
+                });
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancelar'),
+              ),
+              projetor.defeito == null
+                  ? TextButton(
+                      onPressed: () async {
+                        try {
+                          await defeitoService.createDefeito(
+                            Defeito(
+                              descricao: descricaoController.text,
+                              equipamentoCodigo: projetor.codigo_tombamento,
+                              id: 0, // O ID será gerado pelo servidor
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Defeito registrado!'),
+                              backgroundColor: AppColors.primary,
+                            ),
+                          );
+                          onDefeitoUpdated();
+                          Navigator.of(context).pop();
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Erro ao registrar defeito: $e'),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text('Registrar'),
+                    )
+                  : TextButton(
+                      onPressed: () async {
+                        if (atualizarReparo) {
+                          try {
+                            await defeitoService.updateDefeito(
+                              Defeito(
+                                id: projetor.defeito!.id,
+                                descricao: descricaoController.text,
+                                equipamentoCodigo: projetor.codigo_tombamento,
+                              ),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Alterações salvas com sucesso!'),
+                                backgroundColor: AppColors.success,
+                              ),
+                            );
+                            onDefeitoUpdated();
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Erro ao atualizar defeito: $e'),
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
+                            return;
+                          }
+                        } else {
+                          try {
+                            await defeitoService
+                                .removerDefeito(projetor.defeito!);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Defeito removido com Sucesso!'),
+                                backgroundColor: AppColors.warning,
+                              ),
+                            );
+                            onDefeitoUpdated();
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Erro ao remover defeito: $e'),
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
+                            return;
+                          }
+                        }
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        atualizarReparo
+                            ? 'Salvar Alterações'
+                            : 'Remover Defeito',
+                      ),
+                    ),
+            ],
+          );
+        },
+      );
+    },
+  );
 }

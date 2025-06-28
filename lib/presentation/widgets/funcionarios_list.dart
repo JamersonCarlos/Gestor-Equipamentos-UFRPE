@@ -220,84 +220,80 @@ class _FuncionariosListState extends State<FuncionariosList> {
                   children: [
                     SizedBox(
                       width: 200,
-                      child: Expanded(
-                        child: FutureBuilder<List<Curso>>(
-                          future: cursosProvider.fetchCursos(),
-                          builder: (context, snapshot) {
-                            return DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              value: selectedCurso,
-                              decoration: buildInputDecoration(
-                                'Curso',
-                                'Selecione o curso do professor',
-                                null,
-                              ),
-                              icon: const Icon(
-                                Icons.arrow_drop_down,
-                                color: AppColors.primary,
-                              ),
-                              items: snapshot.hasData
-                                  ? snapshot.data!.map((Curso curso) {
-                                      return DropdownMenuItem<String>(
-                                        value: curso.curso_id.toString(),
-                                        child: Text(curso.nome),
-                                      );
-                                    }).toList()
-                                  : [],
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedCurso = newValue;
+                      child: FutureBuilder<List<Curso>>(
+                        future: cursosProvider.fetchCursos(),
+                        builder: (context, snapshot) {
+                          return DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            value: selectedCurso,
+                            decoration: buildInputDecoration(
+                              'Curso',
+                              'Selecione o curso do professor',
+                              null,
+                            ),
+                            icon: const Icon(
+                              Icons.arrow_drop_down,
+                              color: AppColors.primary,
+                            ),
+                            items: snapshot.hasData
+                                ? snapshot.data!.map((Curso curso) {
+                                    return DropdownMenuItem<String>(
+                                      value: curso.curso_id.toString(),
+                                      child: Text(curso.nome),
+                                    );
+                                  }).toList()
+                                : [],
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCurso = newValue;
 
-                                  _filtrarFuncionarios(selectedFilter,
-                                      selectedCurso ?? '', _selectedCargo);
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor, selecione um cartão';
-                                }
-                                return null;
-                              },
-                            );
-                          },
-                        ),
+                                _filtrarFuncionarios(selectedFilter,
+                                    selectedCurso ?? '', _selectedCargo);
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, selecione um cartão';
+                              }
+                              return null;
+                            },
+                          );
+                        },
                       ),
                     ),
                     SizedBox(
                       width: 300,
-                      child: Expanded(
-                        child: FutureBuilder<List<Cargo>>(
-                          future: cargosProvider.fetchCargos(),
-                          builder: (context, snapshot) {
-                            return DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              value: _selectedCargo,
-                              decoration: buildInputDecoration('Cargo',
-                                  'Selecione o cargo do professor', null),
-                              items: snapshot.hasData
-                                  ? snapshot.data!.map((Cargo cargo) {
-                                      return DropdownMenuItem<String>(
-                                        value: cargo.id.toString(),
-                                        child: Text(cargo.nome),
-                                      );
-                                    }).toList()
-                                  : [],
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedCargo = newValue;
-                                  _filtrarFuncionarios(selectedFilter,
-                                      selectedCurso ?? '', _selectedCargo);
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor, selecione um cargo';
-                                }
-                                return null;
-                              },
-                            );
-                          },
-                        ),
+                      child: FutureBuilder<List<Cargo>>(
+                        future: cargosProvider.fetchCargos(),
+                        builder: (context, snapshot) {
+                          return DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            value: _selectedCargo,
+                            decoration: buildInputDecoration('Cargo',
+                                'Selecione o cargo do professor', null),
+                            items: snapshot.hasData
+                                ? snapshot.data!.map((Cargo cargo) {
+                                    return DropdownMenuItem<String>(
+                                      value: cargo.id.toString(),
+                                      child: Text(cargo.nome),
+                                    );
+                                  }).toList()
+                                : [],
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedCargo = newValue;
+                                _filtrarFuncionarios(selectedFilter,
+                                    selectedCurso ?? '', _selectedCargo);
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, selecione um cargo';
+                              }
+                              return null;
+                            },
+                          );
+                        },
                       ),
                     ),
                     DropdownButtonHideUnderline(
