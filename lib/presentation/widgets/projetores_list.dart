@@ -5,10 +5,9 @@ import '../../core/theme/app_colors.dart';
 import '../../services/projetorService.dart';
 
 class ProjetoresList extends StatefulWidget {
-  final Function?
-      onListUpdated; // Callback opcional para notificar atualizações
+   final VoidCallback onListUpdated;
 
-  const ProjetoresList({Key? key, this.onListUpdated}) : super(key: key);
+  const ProjetoresList({Key? key, required this.onListUpdated}) : super(key: key);
 
   @override
   State<ProjetoresList> createState() => _ProjetoresListState();
@@ -26,7 +25,13 @@ class _ProjetoresListState extends State<ProjetoresList> {
           backgroundColor: AppColors.primary,
         ),
       );
-      setState(() {});
+      setState(() {
+        fetchProjetores().then((_) {
+          if (widget.onListUpdated != null) {
+            widget.onListUpdated!();
+          }
+        });
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -73,22 +78,17 @@ class _ProjetoresListState extends State<ProjetoresList> {
   }
 
   void _filterProjetores(String? selectedMarca) {
-    if (_codigoTombController.text.isEmpty) {
-      setState(() {
-        _projetoresFiltrados = _todosProjetores;
-      });
-    } else {
-      setState(() {
-        _projetoresFiltrados = _todosProjetores
-            .where((projetor) => projetor.codigo_tombamento
+    setState(() {
+      _projetoresFiltrados = _todosProjetores.where((projetor) {
+        final codigoTombamentoMatch = _codigoTombController.text.isEmpty ||
+            projetor.codigo_tombamento
                 .toLowerCase()
-                .contains(_codigoTombController.text.toLowerCase()))
-            .where(selectedMarca == null
-                ? (projetor) => true
-                : (projetor) => projetor.marca == selectedMarca)
-            .toList();
-      });
-    }
+                .contains(_codigoTombController.text.toLowerCase());
+        final marcaMatch =
+            selectedMarca == null || projetor.marca == selectedMarca;
+        return codigoTombamentoMatch && marcaMatch;
+      }).toList();
+    });
   }
 
   @override

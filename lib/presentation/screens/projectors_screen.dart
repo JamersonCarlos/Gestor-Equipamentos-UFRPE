@@ -13,6 +13,7 @@ class ProjectorsScreen extends StatefulWidget {
 }
 
 class _ProjectorsScreenState extends State<ProjectorsScreen> {
+  int _listKey = 0;
   final _formKey = GlobalKey<FormState>();
   final _projetorService = ProjetorService();
 
@@ -33,8 +34,7 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
           modelo: _modeloController.text,
           marca: _marcaController.text,
           cor: _corController.text,
-          codigo_tombamento:
-              _tombamentoController.text, // Adicione o novo campo
+          codigo_tombamento: _tombamentoController.text,
         );
 
         await _projetorService.addProjetor(projetor);
@@ -43,8 +43,10 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
         _modeloController.clear();
         _marcaController.clear();
         _corController.clear();
-        _tombamentoController.clear(); // Limpe o novo campo
-        setState(() {});
+        _tombamentoController.clear();
+        setState(() {
+          _listKey++; // Incrementa a chave da lista para forçar a atualização
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Projetor adicionado com sucesso!'),
@@ -52,6 +54,7 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
           ),
         );
       } catch (e) {
+        print(e);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Código de Tombamento já está cadastrado!'),
@@ -242,9 +245,13 @@ class _ProjectorsScreenState extends State<ProjectorsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          Expanded(child: ProjetoresList(
+          Expanded(
+              child: ProjetoresList(
+            key: ValueKey(_listKey), // força rebuild
             onListUpdated: () {
-              setState(() {});
+              setState(() {
+                _listKey++;
+              });
             },
           )),
         ],
