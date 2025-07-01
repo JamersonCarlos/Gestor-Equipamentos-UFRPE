@@ -40,15 +40,15 @@ class EmprestimosDiaProvider extends ChangeNotifier {
     return diaMaisAtivo.isNotEmpty ? diaMaisAtivo['dia_semana'] ?? '' : '';
   }
 
-  Future<String> getProfessorMaisAtivo() async {
+  String getProfessorMaisAtivo() {
     if (_emprestimosPorDia.isEmpty) {
       return '';
     }
     final professorMaisAtivo = _emprestimosPorDia.firstWhere(
       (dia) =>
-          dia['emprestimos'] ==
+          dia['total_emprestimos'] ==
           _emprestimosPorDia
-              .map((dia) => dia['emprestimos'])
+              .map((dia) => dia['total_emprestimos'])
               .reduce((a, b) => a > b ? a : b),
       orElse: () => {},
     );

@@ -18,8 +18,7 @@ class _DashboardHeaderState extends State<DashboardHeader> {
       future: emprestimosDiaProvider.getDiaMaisAtivo(),
       builder: (context, snapshot) {
         final diaMaisAtivo = snapshot.data ?? '';
-        final professorMaisAtivo =
-            emprestimosDiaProvider.getProfessorMaisAtivo();
+        final professorMaisAtivo = emprestimosDiaProvider.getProfessorMaisAtivo();
         return Wrap(
           spacing: 18,
           runSpacing: 16,
@@ -37,15 +36,9 @@ class _DashboardHeaderState extends State<DashboardHeader> {
               icon: Icons.calendar_month,
               color: Colors.purple,
             ),
-            const StatCard(
+            StatCard(
               title: 'Most Active Teacher',
-              value: 'Michael Johnson',
-              icon: Icons.person,
-              color: Colors.purple,
-            ),
-            const StatCard(
-              title: 'Most Active Teacher',
-              value: 'Michael Johnson',
+              value: professorMaisAtivo,
               icon: Icons.person,
               color: Colors.purple,
             ),
@@ -73,7 +66,7 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.20,
+      width: MediaQuery.of(context).size.width * 0.272,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,

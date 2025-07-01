@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/emprestimos_dia_provider.dart';
-import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/notification_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -13,6 +12,9 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    const double notificationWidth = 350.0;
+    const double margin = 16.0;
     return Material(
       elevation: 1.5,
       color: Colors.white,
@@ -21,7 +23,6 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Row(
           children: [
-            // Campo de busca
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
@@ -41,42 +42,98 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(width: 24),
             // Ícones de ação
             IconButton(
-              icon: const Icon(Icons.notifications_none,fill: 1,),
-              onPressed: () {
-                final RenderBox button =
-                    context.findRenderObject() as RenderBox;
-                final RenderBox overlay =
-                    Overlay.of(context).context.findRenderObject() as RenderBox;
-                final Offset position =
-                    button.localToGlobal(Offset.zero, ancestor: overlay);
+              icon: const Icon(Icons.notifications_none),
+              onPressed: () async {
+                  final RenderBox button = context.findRenderObject() as RenderBox;
+                  final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+                  final Offset position =
+                      button.localToGlobal(Offset.zero, ancestor: overlay);
 
+                  final notifications = await provider.getUsosPendentesProvider();
+                  double leftPosition;
+                  if (position.dx + button.size.width + margin + notificationWidth > screenSize.width) {
+                    leftPosition = position.dx - notificationWidth - margin;
+                    if (leftPosition < margin) {
+                      leftPosition = screenSize.width - notificationWidth - margin;
+                      if (leftPosition < margin) leftPosition = margin;
+                    }
+                  } else {
+                    leftPosition = position.dx + button.size.width + margin;
+                  }
+
+                  if (leftPosition < margin) {
+                    leftPosition = margin;
+                  }
                 showDialog(
                   context: context,
                   barrierColor: Colors.transparent,
+                  barrierDismissible: true,
                   builder: (context) {
                     return Stack(
                       children: [
+                        // Overlay invisível para permitir fechar clicando fora
+                        Positioned.fill(
+                          child: GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Container(color: Colors.transparent),
+                          ),
+                        ),
                         Positioned(
-                          left: position.dx + 1200,
-                          top: position.dy +
-                              button.size.height +
-                              8,
+                          left: leftPosition,
+                          top: position.dy + button.size.height + 8,
                           child: Material(
-                            color: Colors.transparent,
-                            child: FutureBuilder<List<Map<String, dynamic>>>(
-                              future: provider.getUsosPendentesProvider(),
-                              builder: (context, snapshot) {
-                                final usosPendentes = snapshot.data ?? [];
-                                return NotificationWidget(
-                                  newNotifications: usosPendentes.map((uso) => NotificationItem(
-                                    title: '${uso['nome']} - ${uso['curso']['nome']}',
-                                    subtitle: 'Uso pendente de devolução',
-                                    date: DateTime.now(),
-                                    icon: Icons.notifications_none,
-                                  )).toList(),
-                                  oldNotifications: [],
-                                );
-                              },
+                            elevation: 8,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              width: 350,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Notificações",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ...notifications.map((uso) => ListTile(
+                                        leading: const CircleAvatar(
+                                          child: Icon(
+                                              Icons.notifications_none,
+                                              color: Colors.white),
+                                          backgroundColor: Colors.blue,
+                                        ),
+                                        title: Text(
+                                            '${uso['nome']} - ${(uso['curso'] as Map<String, dynamic>?)?['nome'] ?? 'Curso não informado'}'),
+                                        subtitle: const Text(
+                                            'Uso pendente de devolução'),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 2),
+                                      )),
+                                  const SizedBox(height: 8),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: const Text("Fechar"),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
