@@ -53,7 +53,7 @@ class EmprestimosDiaProvider extends ChangeNotifier {
       orElse: () => {},
     );
     return professorMaisAtivo.isNotEmpty
-        ? professorMaisAtivo['professor'] ?? ''
+        ? professorMaisAtivo['nome_professor'] ?? ''
         : '';
   }
 

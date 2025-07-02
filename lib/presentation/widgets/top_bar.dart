@@ -2,19 +2,59 @@ import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/emprestimos_dia_provider.dart';
 import 'package:go_router/go_router.dart';
 
-class TopBar extends StatelessWidget implements PreferredSizeWidget {
+class TopBar extends StatefulWidget implements PreferredSizeWidget {
   final String userName;
   final EmprestimosDiaProvider provider;
+
   const TopBar({super.key, required this.userName, required this.provider});
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
 
   @override
+  State<TopBar> createState() => _TopBarState();
+}
+
+class _TopBarState extends State<TopBar> {
+  List<Map<String, dynamic>> _notifications = [];
+  bool _isLoadingNotifications = false;
+  bool _hasLoadedNotifications = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    if (_hasLoadedNotifications) return;
+
+    setState(() {
+      _isLoadingNotifications = true;
+    });
+
+    try {
+      final notifications = await widget.provider.getUsosPendentesProvider();
+      setState(() {
+        _notifications = notifications;
+        _isLoadingNotifications = false;
+        _hasLoadedNotifications = true;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingNotifications = false;
+        _hasLoadedNotifications = true;
+      });
+      debugPrint('Erro ao carregar notificações: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     const double notificationWidth = 350.0;
     const double margin = 16.0;
+
     return Material(
       elevation: 1.5,
       color: Colors.white,
@@ -42,28 +82,35 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(width: 24),
             // Ícones de ação
             IconButton(
-              icon: const Icon(Icons.notifications_none),
+              icon: _IconWithNotification(_notifications.length),
               onPressed: () async {
-                  final RenderBox button = context.findRenderObject() as RenderBox;
-                  final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-                  final Offset position =
-                      button.localToGlobal(Offset.zero, ancestor: overlay);
+                final RenderBox button =
+                    context.findRenderObject() as RenderBox;
+                final RenderBox overlay =
+                    Overlay.of(context).context.findRenderObject() as RenderBox;
+                final Offset position =
+                    button.localToGlobal(Offset.zero, ancestor: overlay);
 
-                  final notifications = await provider.getUsosPendentesProvider();
-                  double leftPosition;
-                  if (position.dx + button.size.width + margin + notificationWidth > screenSize.width) {
-                    leftPosition = position.dx - notificationWidth - margin;
-                    if (leftPosition < margin) {
-                      leftPosition = screenSize.width - notificationWidth - margin;
-                      if (leftPosition < margin) leftPosition = margin;
-                    }
-                  } else {
-                    leftPosition = position.dx + button.size.width + margin;
-                  }
-
+                double leftPosition;
+                if (position.dx +
+                        button.size.width +
+                        margin +
+                        notificationWidth >
+                    screenSize.width) {
+                  leftPosition = position.dx - notificationWidth - margin;
                   if (leftPosition < margin) {
-                    leftPosition = margin;
+                    leftPosition =
+                        screenSize.width - notificationWidth - margin;
+                    if (leftPosition < margin) leftPosition = margin;
                   }
+                } else {
+                  leftPosition = position.dx + button.size.width + margin;
+                }
+
+                if (leftPosition < margin) {
+                  leftPosition = margin;
+                }
+
                 showDialog(
                   context: context,
                   barrierColor: Colors.transparent,
@@ -100,8 +147,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
                                     "Notificações",
@@ -111,21 +157,31 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  ...notifications.map((uso) => ListTile(
-                                        leading: const CircleAvatar(
-                                          child: Icon(
-                                              Icons.notifications_none,
-                                              color: Colors.white),
-                                          backgroundColor: Colors.blue,
-                                        ),
-                                        title: Text(
-                                            '${uso['nome']} - ${(uso['curso'] as Map<String, dynamic>?)?['nome'] ?? 'Curso não informado'}'),
-                                        subtitle: const Text(
-                                            'Uso pendente de devolução'),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 2),
-                                      )),
+                                  if (_isLoadingNotifications)
+                                    const Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  else if (_notifications.isEmpty)
+                                    const Text(
+                                      "Nenhuma notificação pendente",
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  else
+                                    ..._notifications.map((uso) => ListTile(
+                                          leading: const CircleAvatar(
+                                            child: Icon(
+                                                Icons.notifications_none,
+                                                color: Colors.white),
+                                            backgroundColor: Colors.blue,
+                                          ),
+                                          title: Text(
+                                              '${uso['nome']} - ${(uso['curso'] as Map<String, dynamic>?)?['nome'] ?? 'Curso não informado'}'),
+                                          subtitle: const Text(
+                                              'Uso pendente de devolução'),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 2),
+                                        )),
                                   const SizedBox(height: 8),
                                   TextButton(
                                     onPressed: () =>
@@ -163,7 +219,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  userName,
+                  widget.userName,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -176,6 +232,39 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _IconWithNotification(int notificationsCount) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const Icon(Icons.notifications_none),
+        if (notificationsCount > 0)
+          Positioned(
+            right: -3,
+            top: -3,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: Text(
+                '$notificationsCount',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
