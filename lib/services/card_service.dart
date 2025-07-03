@@ -82,7 +82,7 @@ class CardService {
         throw Exception(json.decode(response.body)['detail']);
       }
     } catch (e) {
-      throw Exception('Erro ao criar cartão: $e');
+      throw Exception(e.toString().split('Exception: ')[1]);
     }
   }
 

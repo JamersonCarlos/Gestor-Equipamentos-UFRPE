@@ -175,7 +175,11 @@ class _AddCardModalState extends State<AddCardModal> {
                 label: accessLevel.label,
                 funcionarioId: funcionario.id,
               );
-              widget.cardsProvider.addCard(newCard);
+              widget.cardsProvider.addCard(newCard).catchError((e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(e.toString())),
+                );
+              });
               Navigator.of(context).pop();
             }
           },

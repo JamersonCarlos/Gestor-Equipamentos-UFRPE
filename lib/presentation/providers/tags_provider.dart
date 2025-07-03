@@ -34,9 +34,13 @@ class TagsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addTag(RfidTag tag) async {
-    await _tagService.addTag(tag);
-    fetchTags();
-    notifyListeners();
+  Future<void> addTag(RfidTag tag) async  {
+    try {
+      await _tagService.addTag(tag);
+      fetchTags();
+      notifyListeners();
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

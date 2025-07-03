@@ -284,10 +284,6 @@ class _ProjetoresListState extends State<ProjetoresList> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        TextEditingController
-                                            codigoTagController =
-                                            TextEditingController(
-                                                text: projetor.codigo_tag);
                                         return AlertDialog(
                                           title: const Center(
                                               child: Text(
@@ -297,7 +293,8 @@ class _ProjetoresListState extends State<ProjetoresList> {
                                                 fontSize: 14),
                                           )),
                                           content: TextFormField(
-                                            controller: codigoTagController,
+                                            controller: TextEditingController(
+                                                text: projetor.codigo_tag),
                                             decoration: InputDecoration(
                                               suffixIcon: Row(
                                                 mainAxisSize: MainAxisSize.min,

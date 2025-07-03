@@ -163,7 +163,11 @@ class _AddTagModalState extends State<AddTagModal> {
                 ultimaLeitura: null,
                 equipamentoCodigo: equipamentoCodigo,
               );
-              widget.tagsProvider.addTag(newTag);
+              widget.tagsProvider.addTag(newTag).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erro ao adicionar tag: $e')),
+                  );
+                });
               Navigator.of(context).pop();
             }
           },

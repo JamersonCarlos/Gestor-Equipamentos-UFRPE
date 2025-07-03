@@ -32,7 +32,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
   // String? _selectedCartao;
   String? _selectedCurso;
   String? _selectedCargo;
-
+  int _listKey = 0;
   @override
   void initState() {
     super.initState();
@@ -50,6 +50,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
           cargo_id: int.parse(_cargoIdController.text),
         );
         await _funcionarioService.createFuncionario(funcionario);
+        await _funcionarioService.getFuncionarios();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Professor cadastrado com sucesso!'),
@@ -62,7 +63,9 @@ class _TeachersScreenState extends State<TeachersScreen> {
         _cursoIdController.clear();
         _cargoIdController.clear();
         _formKey.currentState!.reset();
-        setState(() {});
+        setState(() {
+          _listKey++;
+        });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -303,11 +306,15 @@ class _TeachersScreenState extends State<TeachersScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          Expanded(child: FuncionariosList(
+          Expanded(
+              child: FuncionariosList(
+            key: ValueKey(_listKey), // força rebuild
             onListUpdated: () {
-              setState(() {});
+              setState(() {
+                _listKey++;
+              });
             },
-          ))
+          )),
         ],
       ),
     );
