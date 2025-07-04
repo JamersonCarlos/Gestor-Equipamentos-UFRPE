@@ -20,10 +20,14 @@ class CardsProvider extends ChangeNotifier {
     return _rfidCards;
   }
 
-  void addCard(RfidCardInfo card) {
-    _rfidCards.add(card);
-    _cardService.createCard(card);
-    notifyListeners();
+  Future<void> addCard(RfidCardInfo card) async {
+    try {
+      await _cardService.createCard(card);
+      _rfidCards.add(card);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   void removeCard(RfidCardInfo card) {
@@ -89,7 +93,7 @@ class CardsProvider extends ChangeNotifier {
               lastSeen: json.ultimaEntrada?.toString(),
               label: json.nivelAcesso.label,
               funcionarioId: json.funcionarioId,
-            ),  
+            ),
           )
           .toList();
     } catch (e) {

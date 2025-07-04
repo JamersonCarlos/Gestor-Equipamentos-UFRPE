@@ -34,7 +34,7 @@ class _AddTagModalState extends State<AddTagModal> {
     _channel!.stream.listen((message) {
       try {
         final data = json.decode(message);
-        if (data is Map && data['event'] == 'addTag' && data['id'] != null) {
+        if (data is Map && data['event'] == 'addUid' && data['id'] != null) {
           setState(() {
             tagId = data['id'];
             waitingForCard = false;
@@ -163,7 +163,11 @@ class _AddTagModalState extends State<AddTagModal> {
                 ultimaLeitura: null,
                 equipamentoCodigo: equipamentoCodigo,
               );
-              widget.tagsProvider.addTag(newTag);
+              widget.tagsProvider.addTag(newTag).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erro ao adicionar tag: $e')),
+                  );
+                });
               Navigator.of(context).pop();
             }
           },
