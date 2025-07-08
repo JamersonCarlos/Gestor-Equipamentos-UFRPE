@@ -115,13 +115,13 @@ class ListHeader extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-              flex: 3,
-              child: Text('ID da Tag',
+              flex: 4,
+              child: Text('Nome tag',
                   style: TextStyle(
                       color: Colors.grey, fontWeight: FontWeight.w500))),
           Expanded(
-              flex: 4,
-              child: Text('Equipamento Associado',
+              flex: 3,
+              child: Text('ID da Tag',
                   style: TextStyle(
                       color: Colors.grey, fontWeight: FontWeight.w500))),
           Expanded(
@@ -189,14 +189,14 @@ class TagListItem extends StatelessWidget {
             margin: const EdgeInsets.only(right: 16),
           ),
           Expanded(
+              flex: 4,
+              child: Text(tagInfo.equipmentName,
+                  style: const TextStyle(color: Colors.grey))),
+          Expanded(
               flex: 3,
               child: Text(tagInfo.id,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15))),
-          Expanded(
-              flex: 4,
-              child: Text(tagInfo.equipmentName,
-                  style: const TextStyle(color: Colors.grey))),
           Expanded(
               flex: 3,
               child: Text(formatRelativeDate(DateTime.parse(tagInfo.lastActivity)),

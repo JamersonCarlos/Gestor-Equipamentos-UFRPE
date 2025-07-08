@@ -26,7 +26,7 @@ class StatusAlocacao {
       case StatusAlocacao.pendente:
         return StatusAlocacao(value: value, color: Colors.purple);
       case StatusAlocacao.email_enviado:
-        return StatusAlocacao(value: value, color: Colors.yellow);
+        return StatusAlocacao(value: value, color: Colors.amber);
       default:
         throw Exception('StatusAlocacao desconhecido: $value');
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/core/constants/access_level.dart';
+import 'package:gestor_uso_projetores_ufrpe/utils/format_date.util.dart';
 
 class RfidCardInfo {
   final String id;
@@ -96,7 +97,7 @@ class RfidCardItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Última leitura: ${cardInfo.lastSeen}',
+                    'Última leitura: ${formatRelativeDate(DateTime.parse(cardInfo.lastSeen!))}',
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.white60,
