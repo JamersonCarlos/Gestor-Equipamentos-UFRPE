@@ -11,12 +11,15 @@ class ProjectorProvider extends ChangeNotifier {
   List<UsoEquipamento> _usos = [];
   bool _isLoading = false;
   String? _error;
+  int _currentPage = 1;
+  int _totalPages = 1;
 
   List<Projetor> get projectors => _projectors;
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<UsoEquipamento> get usos => _usos;
-
+  int get currentPage => _currentPage;
+  int get totalPages => _totalPages;
   List<Map<String, dynamic>> get entries {
     return _usos.map((uso) {
       final funcionario = uso.funcionario;
@@ -73,14 +76,16 @@ class ProjectorProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getUsos() async {
+  Future<void> getUsos({int skip = 0, int limit = 100}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final usos = await _usoEquipamentoService.getUsos();
-      _usos = usos;
+      final result = await _usoEquipamentoService.getUsos(skip: skip, limit: limit) as Map<String, dynamic>;
+      _usos = result['usos'] as List<UsoEquipamento>;
+      _totalPages = result['total'];
+      _currentPage = skip ~/ limit + 1;
     } catch (e) {
       _error = 'Erro ao carregar usos: $e';
     } finally {

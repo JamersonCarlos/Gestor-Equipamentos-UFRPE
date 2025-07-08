@@ -2,6 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:provider/provider.dart';
 
+class PaginationControls extends StatelessWidget {
+  final int currentPage;
+  final int totalPages;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+  final bool isLoading;
+
+  const PaginationControls({
+    Key? key,
+    required this.currentPage,
+    required this.totalPages,
+    this.onPrevious,
+    this.onNext,
+    this.isLoading = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: (currentPage > 1 && !isLoading) ? onPrevious : null,
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: isLoading
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text('Página $currentPage'),
+        ),
+        IconButton(
+          onPressed: (currentPage < totalPages && !isLoading) ? onNext : null,
+          icon: const Icon(Icons.arrow_forward_ios_rounded),
+        ),
+      ],
+    );
+  }
+}
+
 class ProjectorLoanTable extends StatefulWidget {
   const ProjectorLoanTable({super.key});
 
@@ -13,7 +57,8 @@ class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => context.read<ProjectorProvider>().getUsos());
+    Future.microtask(
+        () => context.read<ProjectorProvider>().getUsos(skip: 0, limit: 10));
   }
 
   @override
@@ -268,6 +313,23 @@ class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
                 ),
               ),
             ),
+            PaginationControls(
+              currentPage: provider.currentPage,
+              totalPages: provider.totalPages,
+              isLoading: provider.isLoading,
+              onPrevious: () {
+                context.read<ProjectorProvider>().getUsos(
+                  skip: (provider.currentPage - 2) * 10,
+                  limit: 10,
+                );
+              },
+              onNext: () {
+                context.read<ProjectorProvider>().getUsos(
+                  skip: provider.currentPage * 10,
+                  limit: 10,
+                );
+              },
+            )
           ],
         ),
       ),
