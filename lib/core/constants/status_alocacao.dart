@@ -5,6 +5,7 @@ class StatusAlocacao {
   static const String devolvido = 'DEVOLVIDO';
   static const String cancelado = 'CANCELADO';
   static const String pendente = 'PENDENTE';
+  static const String email_enviado = 'EMAIL_ENVIADO';
   
   final String value;
   final Color color;
@@ -23,6 +24,8 @@ class StatusAlocacao {
       case StatusAlocacao.cancelado:
         return StatusAlocacao(value: value, color: Colors.red);
       case StatusAlocacao.pendente:
+        return StatusAlocacao(value: value, color: Colors.purple);
+      case StatusAlocacao.email_enviado:
         return StatusAlocacao(value: value, color: Colors.yellow);
       default:
         throw Exception('StatusAlocacao desconhecido: $value');
