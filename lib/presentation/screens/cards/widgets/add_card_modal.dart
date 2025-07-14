@@ -19,7 +19,7 @@ class _AddCardModalState extends State<AddCardModal> {
   final _formKey = GlobalKey<FormState>();
   String cardId = '';
   String label = '';
-  Funcionario funcionario = Funcionario(id: 0, nome: '', email: '', codigo_cartao: '', curso_id: 0, cargo_id: 0);
+  Funcionario? funcionario;
   AccessLevel accessLevel = AccessLevel.admin;
   bool waitingForCard = true;
   WebSocketChannel? _channel;
@@ -28,15 +28,12 @@ class _AddCardModalState extends State<AddCardModal> {
   @override
   void initState() {
     super.initState();
-    _channel =
-        WebSocketChannel.connect(Uri.parse('ws://localhost:8000/add'));
+    _channel = WebSocketChannel.connect(Uri.parse('ws://localhost:8000/add'));
     _channel!.sink.add(json.encode({'event': 'addUid'}));
     _channel!.stream.listen((message) {
       try {
         final data = json.decode(message);
-        if (data is Map &&
-            data['event'] == 'addUid' &&
-            data['id'] != null) {
+        if (data is Map && data['event'] == 'addUid' && data['id'] != null) {
           setState(() {
             cardId = data['id'];
             waitingForCard = false;
@@ -44,10 +41,13 @@ class _AddCardModalState extends State<AddCardModal> {
         }
       } catch (_) {}
     });
-     WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.cardsProvider.getFuncionariosSemCartao().then((data) {
         setState(() {
           funcionarios = data;
+          if (funcionarios.isNotEmpty) {
+            funcionario = funcionarios.first;
+          }
         });
       });
     });
@@ -125,12 +125,15 @@ class _AddCardModalState extends State<AddCardModal> {
                 onSaved: (value) => label = value!,
               ),
               DropdownButtonFormField<Funcionario>(
-                value: funcionarios.first,
+                value: funcionarios.isNotEmpty ? funcionario : null,
                 decoration: const InputDecoration(labelText: 'Funcionário'),
-                items: funcionarios.map<DropdownMenuItem<Funcionario>>((opt) => DropdownMenuItem<Funcionario>(
-                  value: opt,
-                  child: Text(opt.nome),
-                )).toList(),
+                items: funcionarios
+                    .map<DropdownMenuItem<Funcionario>>(
+                        (opt) => DropdownMenuItem<Funcionario>(
+                              value: opt,
+                              child: Text(opt.nome),
+                            ))
+                    .toList(),
                 onChanged: (value) => setState(() => funcionario = value!),
               ),
               DropdownButtonFormField<AccessLevel>(
@@ -165,15 +168,15 @@ class _AddCardModalState extends State<AddCardModal> {
         ),
         ElevatedButton(
           onPressed: () {
-            if (_formKey.currentState!.validate()) {
+            if (_formKey.currentState!.validate() && funcionario != null) {
               _formKey.currentState!.save();
               final newCard = RfidCardInfo(
                 id: '',
                 cardId: cardId,
                 accessLevel: accessLevel,
-                lastSeen: '',
+                lastSeen: DateTime.now().toString(),
                 label: accessLevel.label,
-                funcionarioId: funcionario.id,
+                funcionarioId: funcionario!.id,
               );
               widget.cardsProvider.addCard(newCard).catchError((e) {
                 ScaffoldMessenger.of(context).showSnackBar(

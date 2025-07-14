@@ -16,8 +16,13 @@ String formatDateToMonth(DateTime date) {
   return DateFormat('MM/yyyy').format(date);
 }
 
-String formatRelativeDate(DateTime date) {
+String formatRelativeDate(DateTime? date) {
   final now = DateTime.now();
+
+  if (date == null) {
+    return "N/D";
+  }
+
   final difference = now.difference(date);
 
   // Se a data é no futuro, retorna "agora"

@@ -97,7 +97,7 @@ class RfidCardItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Última leitura: ${formatRelativeDate(DateTime.parse(cardInfo.lastSeen!))}',
+                    'Última leitura: ${formatRelativeDate(DateTime.parse(cardInfo.lastSeen ?? DateTime.now().toString()))}',
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.white60,

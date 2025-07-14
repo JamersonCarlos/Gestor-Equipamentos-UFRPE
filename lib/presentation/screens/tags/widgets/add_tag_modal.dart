@@ -21,7 +21,7 @@ class _AddTagModalState extends State<AddTagModal> {
   final _formKey = GlobalKey<FormState>();
   String tagId = '';
   String label = '';
-  String equipamentoCodigo = '';
+  String? equipamentoCodigo;
   bool waitingForCard = true;
   WebSocketChannel? _channel;
   List<Map<String, dynamic>> equipamentos = [];
@@ -46,6 +46,9 @@ class _AddTagModalState extends State<AddTagModal> {
       widget.projectorProvider.getProjectors().then((projectors) {
         setState(() {
           equipamentos = projectors;
+          if (equipamentos.isNotEmpty) {
+            equipamentoCodigo = equipamentos.first['codigo_tombamento'];
+          }
         });
       });
     });
@@ -125,7 +128,7 @@ class _AddTagModalState extends State<AddTagModal> {
                 onSaved: (value) => label = value!,
               ),
               DropdownButtonFormField<String>(
-                value: equipamentos.first['codigo_tombamento'],
+                value: equipamentoCodigo,
                 decoration: const InputDecoration(labelText: 'Equipamento'),
                 items: equipamentos
                     .map<DropdownMenuItem<String>>(
@@ -160,14 +163,14 @@ class _AddTagModalState extends State<AddTagModal> {
                 rfid: tagId,
                 nivelAcesso: 1,
                 status: 'ATIVO',
-                ultimaLeitura: null,
+                ultimaLeitura: DateTime.now(),
                 equipamentoCodigo: equipamentoCodigo,
               );
               widget.tagsProvider.addTag(newTag).catchError((e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Erro ao adicionar tag: $e')),
-                  );
-                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Erro ao adicionar tag: $e')),
+                );
+              });
               Navigator.of(context).pop();
             }
           },
