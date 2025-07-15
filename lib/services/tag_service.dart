@@ -36,4 +36,17 @@ class TagService {
       throw Exception('Erro ao adicionar tag: [${response.statusCode}]');
     }
   }
+
+  Future<void> updateTagStatus(String id, bool isActive) async {
+    final response = await http.patch(
+      Uri.parse('$_baseUrl$id?status=$isActive'),
+      headers: await getHeaders(),
+    );
+  
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Erro ao atualizar status da tag: [${response.statusCode}]');
+    }
+  }
 }

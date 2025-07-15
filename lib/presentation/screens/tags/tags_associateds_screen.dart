@@ -9,7 +9,7 @@ class TagInfo {
   final String id;
   final String equipmentName;
   final String lastActivity;
-  final bool isActive;
+  bool isActive;
 
   TagInfo({
     required this.id,
@@ -75,9 +75,11 @@ class _ElegantTagDashboardState extends State<ElegantTagDashboard> {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         onPressed: () {
-         showDialog(
+          showDialog(
             context: context,
-            builder: (context) => AddTagModal(tagsProvider: tagsProvider, projectorProvider: projectorProvider),
+            builder: (context) => AddTagModal(
+                tagsProvider: tagsProvider,
+                projectorProvider: projectorProvider),
           );
         },
         child: const Icon(Icons.add),
@@ -183,7 +185,7 @@ class TagListItem extends StatelessWidget {
             width: 5,
             height: 40,
             decoration: BoxDecoration(
-              color: tagInfo.isActive ? Colors.purple : Colors.grey,
+              color: tagInfo.isActive ? Colors.green : Colors.red,
               borderRadius: BorderRadius.circular(4),
             ),
             margin: const EdgeInsets.only(right: 16),
@@ -199,27 +201,23 @@ class TagListItem extends StatelessWidget {
                       fontWeight: FontWeight.bold, fontSize: 15))),
           Expanded(
               flex: 3,
-              child: Text(formatRelativeDate(DateTime.parse(tagInfo.lastActivity)),
+              child: Text(
+                  formatRelativeDate(DateTime.parse(tagInfo.lastActivity)),
                   style: const TextStyle(color: Colors.grey))),
           Expanded(
             flex: 2,
             child: Row(
               children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: tagInfo.isActive ? Colors.green : Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  tagInfo.isActive ? 'Ativa' : 'Inativa',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: tagInfo.isActive ? Colors.green : Colors.red,
-                  ),
+                Switch(
+                  value: tagInfo.isActive,
+                  onChanged: (value) async {
+                    await context.read<TagsProvider>().toggleTagStatus(tagInfo);
+                  },
+                  activeColor: Colors.white,
+                  inactiveTrackColor: Colors.red,
+                  inactiveThumbColor: Colors.white,
+                  activeTrackColor: Colors.green,
+                  thumbColor: MaterialStateProperty.all(Colors.white),
                 ),
               ],
             ),

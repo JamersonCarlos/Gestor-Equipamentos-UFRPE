@@ -34,7 +34,7 @@ class TagsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addTag(RfidTag tag) async  {
+  Future<void> addTag(RfidTag tag) async {
     try {
       await _tagService.addTag(tag);
       fetchTags();
@@ -42,5 +42,15 @@ class TagsProvider extends ChangeNotifier {
     } catch (e) {
       throw Exception(e);
     }
+  }
+
+  Future<void> toggleTagStatus(TagInfo tag) async {
+    // Altere o status localmente
+    //tag.isActive = !tag.isActive;
+    tags.firstWhere((element) => element.id == tag.id).isActive = !tag.isActive;
+    notifyListeners();
+
+    // Faça a chamada para atualizar no backend, se necessário
+    await _tagService.updateTagStatus(tag.id, tag.isActive);
   }
 }
