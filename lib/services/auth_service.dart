@@ -7,8 +7,9 @@ import 'package:http/http.dart' as http;
 class AuthService {
   final _storage = const FlutterSecureStorage();
   final String baseUrl;
+  User? user;
 
-  AuthService({required this.baseUrl});
+  AuthService({required this.baseUrl, this.user});
 
   static const _tokenKey = 'auth_token';
 
@@ -18,7 +19,7 @@ class AuthService {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body:  jsonEncode({
+      body: jsonEncode({
         'username': email,
         'password': password,
       }),
@@ -34,10 +35,11 @@ class AuthService {
       final userJson = data['user'] ?? data; // dependendo da API
       await _storage.write(key: _tokenKey, value: token);
       final user = User.fromJson(userJson, token);
-
+      this.user = user;
       return user;
     } else if (response.statusCode == 401) {
-      throw Exception('Credenciais inválidas. Por favor, verifique seu email e senha.');
+      throw Exception(
+          'Credenciais inválidas. Por favor, verifique seu email e senha.');
     } else {
       throw Exception('Falha no login: ${response.statusCode}');
     }
@@ -58,9 +60,20 @@ class AuthService {
       headers: await getHeaders(),
     );
 
-    if(response.statusCode == 200) { 
-      return true; 
+    if (response.statusCode == 200) {
+      return true;
     }
-    return false; 
+    return false;
+  }
+
+  User? getUser() {
+    return user;
+  }
+
+  static AuthService? _instance;
+
+  static AuthService instance() {
+    _instance ??= AuthService(baseUrl: 'http://localhost:8000');
+    return _instance!;
   }
 }

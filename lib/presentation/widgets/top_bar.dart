@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/emprestimos_dia_provider.dart';
+import 'package:gestor_uso_projetores_ufrpe/services/auth_service.dart';
 import 'package:go_router/go_router.dart';
 
 class TopBar extends StatefulWidget implements PreferredSizeWidget {
-  final String userName;
   final EmprestimosDiaProvider provider;
 
-  const TopBar({super.key, required this.userName, required this.provider});
+  const TopBar({super.key, required this.provider});
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
@@ -19,6 +19,7 @@ class _TopBarState extends State<TopBar> {
   List<Map<String, dynamic>> _notifications = [];
   bool _isLoadingNotifications = false;
   bool _hasLoadedNotifications = false;
+  final AuthService authService = AuthService.instance();
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _TopBarState extends State<TopBar> {
     final Size screenSize = MediaQuery.of(context).size;
     const double notificationWidth = 350.0;
     const double margin = 16.0;
-
+    final user = authService.getUser();
     return Material(
       elevation: 1.5,
       color: Colors.white,
@@ -212,14 +213,14 @@ class _TopBarState extends State<TopBar> {
             // Avatar e nome do usuário
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   backgroundImage: NetworkImage(
-                      'https://randomuser.me/api/portraits/women/44.jpg'),
+                      "https://ui-avatars.com/api/?name=${user?.fullName.split(' ')[0] ?? 'U'}&background=random"),
                   radius: 18,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  widget.userName,
+                  user?.fullName.split(' ')[0] ?? 'Usuário',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

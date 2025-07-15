@@ -13,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService(baseUrl: 'http://localhost:8000'); // Ajuste para produção
+  final _authService = AuthService.instance(); // Ajuste para produção
 
   bool _loading = false;
   String? _errorMessage;

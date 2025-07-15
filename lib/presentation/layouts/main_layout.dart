@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestor_uso_projetores_ufrpe/domain/entities/user_entity.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/emprestimos_dia_provider.dart';
 import 'package:provider/provider.dart';
 import '../widgets/sidebar_menu/sidebar_menu.dart';
@@ -6,7 +7,7 @@ import '../widgets/top_bar.dart';
 
 class MainLayout extends StatelessWidget {
   final Widget child;
-
+  
   const MainLayout({
     super.key,
     required this.child,
@@ -27,7 +28,7 @@ class MainLayout extends StatelessWidget {
             child: Column(
               children: [
                 // TopBar
-                TopBar(userName: 'Emma Kwan',provider: provider),
+                TopBar(provider: provider),
                 // Conteúdo
                 Expanded(
                   child: Padding(
