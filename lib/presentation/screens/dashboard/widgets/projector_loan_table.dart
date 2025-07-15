@@ -58,7 +58,7 @@ class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
   void initState() {
     super.initState();
     Future.microtask(
-        () => context.read<ProjectorProvider>().getUsos(skip: 0, limit: 10));
+        () => context.read<ProjectorProvider>().getUsos(page: 1, limit: 10));
   }
 
   @override
@@ -313,23 +313,29 @@ class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
             PaginationControls(
               currentPage: provider.currentPage,
               totalPages: provider.totalPages,
               isLoading: provider.isLoading,
-              onPrevious: () {
-                context.read<ProjectorProvider>().getUsos(
-                  skip: (provider.currentPage - 2) * 10,
-                  limit: 10,
-                );
-              },
-              onNext: () {
-                context.read<ProjectorProvider>().getUsos(
-                  skip: provider.currentPage * 10,
-                  limit: 10,
-                );
-              },
-            )
+              onPrevious: provider.currentPage > 1
+                  ? () {
+                      context.read<ProjectorProvider>().getUsos(
+                            page: provider.currentPage - 1,
+                            limit: 10,
+                          );
+                    }
+                  : null,
+              onNext: provider.currentPage < provider.totalPages
+                  ? () {
+                      context.read<ProjectorProvider>().getUsos(
+                            page: provider.currentPage + 1,
+                            limit: 10,
+                          );
+                    }
+                  : null,
+            ),
+            const SizedBox(height: 5),
           ],
         ),
       ),
