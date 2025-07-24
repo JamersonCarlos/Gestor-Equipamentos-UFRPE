@@ -10,7 +10,6 @@ import 'package:gestor_uso_projetores_ufrpe/presentation/widgets/funcionarios_li
 import 'package:gestor_uso_projetores_ufrpe/utils/inputDecoration.dart';
 import 'package:provider/provider.dart';
 import '../../services/funcionarioService.dart';
-import 'package:gestor_uso_projetores_ufrpe/presentation/screens/cards/widgets/rfid_card_item.dart';
 
 import '../../core/theme/app_colors.dart';
 
@@ -43,7 +42,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
       try {
         final funcionario = Funcionario(
           id: 0,
-          nome: _nomeController.text, 
+          nome: _nomeController.text,
           email: '${_emailController.text}@ufrpe.br',
           codigo_cartao: _codigoCartaoController.text,
           curso_id: int.parse(_cursoIdController.text),
@@ -57,13 +56,15 @@ class _TeachersScreenState extends State<TeachersScreen> {
             backgroundColor: AppColors.primary,
           ),
         );
-        _nomeController.clear();
-        _emailController.clear();
-        _codigoCartaoController.clear();
-        _cursoIdController.clear();
-        _cargoIdController.clear();
-        _formKey.currentState!.reset();
+
         setState(() {
+          _nomeController.text = '';
+          _emailController.text = '';
+          _codigoCartaoController.text = '';
+          _cursoIdController.text = '';
+          _cargoIdController.text = '';
+          _selectedCurso = null;
+          _selectedCargo = null;
           _listKey++;
         });
       } catch (e) {

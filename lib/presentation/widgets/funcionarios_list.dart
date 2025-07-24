@@ -26,8 +26,6 @@ class FuncionariosList extends StatefulWidget {
 class _FuncionariosListState extends State<FuncionariosList> {
   final _funcionarioService = FuncionarioService();
 
-  // Removed duplicate initState
-
   Future<void> _updateFuncionario(
       Funcionario funcionario, String novoCodigoCartao) async {
     try {
@@ -69,7 +67,9 @@ class _FuncionariosListState extends State<FuncionariosList> {
           backgroundColor: AppColors.primary,
         ),
       );
-      setState(() {});
+      setState(() {
+        widget.onListUpdated?.call();
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

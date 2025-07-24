@@ -13,7 +13,7 @@ class ProjetorService {
 
   Future<List<Projetor>> getProjetores() async {
     final headers = await getHeaders();
-    final response = await http.get(Uri.parse(_baseUrl), headers: headers);
+    final response = await http.get(Uri.parse('$_baseUrl/'), headers: headers);
 
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
@@ -50,10 +50,10 @@ class ProjetorService {
     }
   }
 
-  Future<void> deleteProjetor(String id) async {
+  Future<void> deleteProjetor(String codigo_tombamento) async {
     final headers = await getHeaders();
-    final response =
-        await http.delete(Uri.parse('$_baseUrl/$id'), headers: headers);
+    final response = await http
+        .delete(Uri.parse('$_baseUrl/$codigo_tombamento'), headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception('Falha ao remover projetor');
