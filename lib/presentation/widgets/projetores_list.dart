@@ -1,5 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/defeito.dart';
 import 'package:gestor_uso_projetores_ufrpe/services/defeito_service.dart';
