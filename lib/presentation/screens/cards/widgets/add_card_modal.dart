@@ -116,14 +116,6 @@ class _AddCardModalState extends State<AddCardModal> {
                 initialValue: cardId,
                 enabled: false,
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Nome'),
-                initialValue: '',
-                enabled: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Informe o nome' : null,
-                onSaved: (value) => label = value!,
-              ),
               DropdownButtonFormField<Funcionario>(
                 value: funcionarios.isNotEmpty ? funcionario : null,
                 decoration: const InputDecoration(labelText: 'Funcionário'),
