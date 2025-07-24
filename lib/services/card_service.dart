@@ -13,7 +13,7 @@ class CardService {
   Future<List<RfidCard>> getCards({int skip = 0, int limit = 10}) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl?skip=$skip&limit=$limit'),
+        Uri.parse('$_baseUrl/?skip=$skip&limit=$limit'),
         headers: await getHeaders(),
       );
 
@@ -29,7 +29,7 @@ class CardService {
       throw Exception('Erro ao buscar cartões: $e');
     }
   }
-  
+
   Future<List<RfidCard>> getCardNotUsed({int skip = 0, int limit = 10}) async {
     try {
       final response = await http.get(
@@ -66,11 +66,10 @@ class CardService {
   Future<void> createCard(RfidCardInfo card) async {
     try {
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse('$_baseUrl/'),
         headers: await getHeaders(),
         body: json.encode({
           'rfid': card.cardId,
-          'nome': card.label,
           'nivel_acesso': card.accessLevel.value,
           'status': card.accessLevel.label,
           'funcionario_id': card.funcionarioId,
@@ -89,7 +88,7 @@ class CardService {
   Future<void> deleteCard(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse('$_baseUrl$id'),
+        Uri.parse('$_baseUrl/$id'),
         headers: await getHeaders(),
       );
       if (response.statusCode != 200 && response.statusCode != 204) {
@@ -103,7 +102,7 @@ class CardService {
   Future<void> updateCard(RfidCard card) async {
     try {
       final response = await http.put(
-        Uri.parse('$_baseUrl${card.id}'),
+        Uri.parse('$_baseUrl/${card.id}'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(card.toJson()),
       );
