@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/cargo.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/cursos.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/cards_provider.dart';
@@ -25,6 +26,7 @@ class FuncionariosList extends StatefulWidget {
 
 class _FuncionariosListState extends State<FuncionariosList> {
   final _funcionarioService = FuncionarioService();
+  bool copiado = false;
 
   Future<void> _updateFuncionario(
       Funcionario funcionario, String novoCodigoCartao) async {
@@ -148,6 +150,16 @@ class _FuncionariosListState extends State<FuncionariosList> {
   String? _selectedCargo;
 
   final TextEditingController _nomeController = TextEditingController();
+
+  void copiarCodigo(String codigoCartao) {
+    Clipboard.setData(ClipboardData(text: codigoCartao));
+    setState(() => copiado = true);
+
+    // Oculta o texto após 2 segundos
+    Future.delayed(Duration(seconds: 2), () {
+      if (mounted) setState(() => copiado = false);
+    });
+  }
 
   @override
   void initState() {
@@ -429,12 +441,30 @@ class _FuncionariosListState extends State<FuncionariosList> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
-                                  'Código do cartão: ${funcionario.codigo_cartao}',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 14,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Código do cartão: ${funcionario.codigo_cartao}',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.copy,
+                                          size: 18, color: Colors.blueAccent),
+                                      tooltip: 'Copiar código',
+                                      onPressed: () => copiarCodigo(
+                                          funcionario.codigo_cartao),
+                                    ),
+                                    if (copiado)
+                                      Text(
+                                        'Copiado!',
+                                        style: TextStyle(
+                                            color: Colors.green[700],
+                                            fontSize: 12),
+                                      ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -442,76 +472,6 @@ class _FuncionariosListState extends State<FuncionariosList> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                OutlinedButton.icon(
-                                  icon: const Icon(Icons.credit_card),
-                                  label: const Text('Código Cartão'),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Center(
-                                              child: Text(
-                                            'Código do Cartão',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          )),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              FutureBuilder<RfidCardInfo?>(
-                                                future: cardsProvider.findCard(
-                                                    funcionario.codigo_cartao),
-                                                builder: (context, snapshot) {
-                                                  RfidCardInfo? card;
-                                                  try {
-                                                    card = snapshot.data;
-                                                  } catch (_) {
-                                                    card = null;
-                                                  }
-                                                  if (card == null) {
-                                                    return const Text(
-                                                        'Cartão não encontrado');
-                                                  }
-                                                  return SizedBox(
-                                                    width: 400,
-                                                    height: 220,
-                                                    child: RfidCardItem(
-                                                        cardInfo: card),
-                                                  );
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Text("Fechar"),
-                                            ),
-                                            // TextButton(
-                                            //   onPressed: () {
-                                            //     _updateFuncionario(
-                                            //         funcionario,
-                                            //         codigoCartaoController
-                                            //             .text);
-                                            //   },
-                                            //   child: const Text(
-                                            //       'Salvar Alterações'),
-                                            // )
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: AppColors.primary,
-                                    side: const BorderSide(
-                                        color: AppColors.primary),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
                                 ElevatedButton.icon(
                                   icon: const Icon(Icons.delete),
                                   label: const Text('Remover'),
