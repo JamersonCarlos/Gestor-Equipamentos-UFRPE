@@ -210,25 +210,107 @@ class _TopBarState extends State<TopBar> {
               tooltip: 'Configurações',
             ),
             const SizedBox(width: 16),
-            // Avatar e nome do usuário
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      "https://ui-avatars.com/api/?name=${user?.fullName.split(' ')[0] ?? 'U'}&background=random"),
-                  radius: 18,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  user?.fullName.split(' ')[0] ?? 'Usuário',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+            // Avatar e nome do usuário com dropdown
+            PopupMenuButton<String>(
+              offset: const Offset(0, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        "https://ui-avatars.com/api/?name=${user?.fullName.split(' ')[0] ?? 'U'}&background=random"),
+                    radius: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    user?.fullName.split(' ')[0] ?? 'Usuário',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.keyboard_arrow_down),
+                ],
+              ),
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem<String>(
+                  value: 'profile',
+                  child: const Row(
+                    children: [
+                      Icon(Icons.person_outline, size: 20),
+                      SizedBox(width: 12),
+                      Text('Perfil'),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
-                const Icon(Icons.keyboard_arrow_down),
+                PopupMenuItem<String>(
+                  value: 'settings',
+                  child: const Row(
+                    children: [
+                      Icon(Icons.settings_outlined, size: 20),
+                      SizedBox(width: 12),
+                      Text('Configurações'),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem<String>(
+                  value: 'logout',
+                  child: const Row(
+                    children: [
+                      Icon(Icons.logout, size: 20, color: Colors.red),
+                      SizedBox(width: 12),
+                      Text('Sair', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
               ],
+              onSelected: (String value) async {
+                switch (value) {
+                  case 'profile':
+                    // TODO: Implementar navegação para perfil
+                    break;
+                  case 'settings':
+                    context.goNamed('settings');
+                    break;
+                  case 'logout':
+                    // Mostrar diálogo de confirmação
+                    final shouldLogout = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Confirmar Saída'),
+                          content: const Text(
+                              'Tem certeza que deseja sair da aplicação?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                              ),
+                              child: const Text('Sair'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (shouldLogout == true) {
+                      await authService.logout();
+                      if (context.mounted) {
+                        context.goNamed('login');
+                      }
+                    }
+                    break;
+                }
+              },
             ),
           ],
         ),
