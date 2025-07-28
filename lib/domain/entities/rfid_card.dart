@@ -20,7 +20,7 @@ class RfidCard {
 
   factory RfidCard.fromJson(Map<String, dynamic> json) {
     return RfidCard(
-      nome: json['nome'] as String,
+      nome: json['nome'] as String? ?? '',
       rfid: json['rfid'] as String,
       nivelAcesso: AccessLevel.fromValue(json['nivel_acesso'] as int),
       status: json['status'] as String,
