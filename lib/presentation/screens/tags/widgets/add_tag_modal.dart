@@ -30,7 +30,6 @@ class _AddTagModalState extends State<AddTagModal> {
   void initState() {
     super.initState();
     _channel = WebSocketChannel.connect(Uri.parse('ws://localhost:8000/add'));
-    _channel!.sink.add(json.encode({'event': 'addUid'}));
     _channel!.stream.listen((message) {
       try {
         final data = json.decode(message);

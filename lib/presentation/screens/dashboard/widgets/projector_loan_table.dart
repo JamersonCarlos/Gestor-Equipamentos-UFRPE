@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class PaginationControls extends StatelessWidget {
   final int currentPage;
@@ -54,9 +57,23 @@ class ProjectorLoanTable extends StatefulWidget {
 }
 
 class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
+  WebSocketChannel? _channel;
+
   @override
   void initState() {
     super.initState();
+    _channel =
+        WebSocketChannel.connect(Uri.parse('ws://localhost:8000/newuso'));
+    _channel!.stream.listen((message) {
+      try {
+        final data = json.decode(message);
+        if (data is Map && data['codigo_equipamento'] != '') {
+          setState(() {
+            context.read<ProjectorProvider>().getUsos(page: 1, limit: 10);
+          });
+        }
+      } catch (_) {}
+    });
     Future.microtask(
         () => context.read<ProjectorProvider>().getUsos(page: 1, limit: 10));
   }
