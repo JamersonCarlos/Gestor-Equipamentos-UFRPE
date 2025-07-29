@@ -56,34 +56,73 @@ class ProjectorLoanTable extends StatefulWidget {
   State<ProjectorLoanTable> createState() => _ProjectorLoanTableState();
 }
 
-class _ProjectorLoanTableState extends State<ProjectorLoanTable> {
+class _ProjectorLoanTableState extends State<ProjectorLoanTable>
+    with AutomaticKeepAliveClientMixin {
   WebSocketChannel? _channel;
+  bool _isUpdating = false;
+  bool _initialDataLoaded = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
     _channel =
         WebSocketChannel.connect(Uri.parse('ws://localhost:8000/newuso'));
+
+    // Configurar listener do WebSocket
     _channel!.stream.listen((message) {
       try {
         final data = json.decode(message);
         if (data is Map && data['codigo_equipamento'] != '') {
-          setState(() {
-            context.read<ProjectorProvider>().getUsos(page: 1, limit: 10);
-          });
+          _handleWebSocketUpdate();
         }
-      } catch (_) {}
+      } catch (e) {
+        // Erro ao processar mensagem do WebSocket
+      }
     });
-    Future.microtask(
-        () => context.read<ProjectorProvider>().getUsos(page: 1, limit: 10));
+
+    // Carregar dados iniciais apenas uma vez
+    if (!_initialDataLoaded) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_initialDataLoaded) {
+          context.read<ProjectorProvider>().getUsos(page: 1, limit: 10);
+          _initialDataLoaded = true;
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _channel?.sink.close();
+    super.dispose();
+  }
+
+  void _handleWebSocketUpdate() {
+    if (!_isUpdating && mounted) {
+      _isUpdating = true;
+      // Usar Future.delayed para dar tempo do scroll se estabilizar
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          // Usar o método refreshUsos que força a atualização
+          final provider = context.read<ProjectorProvider>();
+          provider.refreshUsos();
+          _isUpdating = false;
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Necessário para o AutomaticKeepAliveClientMixin
+
     final provider = context.watch<ProjectorProvider>();
     final entries = provider.entries;
 
-    if (provider.isLoading) {
+    if (provider.isLoading && entries.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 

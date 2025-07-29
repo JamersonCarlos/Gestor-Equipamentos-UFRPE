@@ -79,20 +79,74 @@ class ProjectorProvider extends ChangeNotifier {
   }
 
   Future<void> getUsos({int page = 1, int limit = 10}) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
+    // Permitir requisição inicial quando não há dados
+    if (!_isLoading && (_currentPage != page || _usos.isEmpty)) {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+    } else if (!_isLoading) {
+      // Se for a mesma página e já há dados, não fazer nada
+      return;
+    }
 
     try {
       final skip = (page - 1) * limit;
       final result = await _usoEquipamentoService.getUsos(
           skip: skip, limit: limit) as Map<String, dynamic>;
-      _usos = result['usos'] as List<UsoEquipamento>;
-      _totalElements = (result['total'] as int?) ?? 0;
-      _currentPage = page;
-      _totalPages = ((_totalElements + limit - 1) ~/ limit);
+
+      final newUsos = result['usos'] as List<UsoEquipamento>;
+      final newTotalElements = (result['total'] as int?) ?? 0;
+      final newTotalPages = ((newTotalElements + limit - 1) ~/ limit);
+
+      // Só notificar se os dados realmente mudaram
+      bool hasChanged = _usos.length != newUsos.length ||
+          _totalElements != newTotalElements ||
+          _currentPage != page ||
+          _totalPages != newTotalPages;
+
+      if (hasChanged) {
+        _usos = newUsos;
+        _totalElements = newTotalElements;
+        _currentPage = page;
+        _totalPages = newTotalPages;
+      }
+
+      _error = null;
     } catch (e) {
       _error = 'Erro ao carregar usos: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Método específico para atualizações do WebSocket
+  Future<void> refreshUsos() async {
+    if (_isLoading) {
+      return;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final skip = (_currentPage - 1) * 10; // Usar limit padrão de 10
+      final result = await _usoEquipamentoService.getUsos(skip: skip, limit: 10)
+          as Map<String, dynamic>;
+
+      final newUsos = result['usos'] as List<UsoEquipamento>;
+      final newTotalElements = (result['total'] as int?) ?? 0;
+      final newTotalPages = ((newTotalElements + 10 - 1) ~/ 10);
+
+      // Sempre atualizar os dados no refresh
+      _usos = newUsos;
+      _totalElements = newTotalElements;
+      _totalPages = newTotalPages;
+
+      _error = null;
+    } catch (e) {
+      _error = 'Erro ao atualizar usos: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
