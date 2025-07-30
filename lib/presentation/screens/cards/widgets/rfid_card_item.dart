@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gestor_uso_projetores_ufrpe/core/constants/access_level.dart';
 import 'package:gestor_uso_projetores_ufrpe/utils/format_date.util.dart';
 
@@ -125,9 +126,10 @@ class RfidCardItem extends StatelessWidget {
                             duration: const Duration(seconds: 1),
                           ),
                         );
+                        Clipboard.setData(ClipboardData(text: cardInfo.cardId));
                       },
                       child: const Text(
-                        'Detalhes',
+                        'Copiar',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
