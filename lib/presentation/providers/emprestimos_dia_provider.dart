@@ -90,7 +90,43 @@ class EmprestimosDiaProvider extends ChangeNotifier {
 
   Future<List<EmprestimosPorDiaMesResponse>>
       getEmprestimosPorMesResponse() async {
-    final list = await getEmprestimosPorMes();
-    return list.map((e) => EmprestimosPorDiaMesResponse.fromJson(e)).toList();
+    try {
+      final list = await _service.getEmprestimosPorMes();
+      return list.map((e) => EmprestimosPorDiaMesResponse.fromJson(e)).toList();
+    } catch (e) {
+      debugPrint('Erro ao carregar empréstimos por mes response: $e');
+      return [];
+    }
+  }
+
+  // Método para atualizar dados do dashboard via WebSocket
+  Future<void> refreshDashboardData() async {
+    if (_isLoading) {
+      return;
+    }
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      // Recarregar todos os dados do dashboard
+      _emprestimosPorDia = await _service.getEmprestimosPorDia();
+    } catch (e) {
+      debugPrint('Erro ao atualizar dados do dashboard: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Método para recarregar dados por mês (sem notifyListeners durante execução)
+  Future<List<EmprestimosPorDiaMesResponse>> refreshEmprestimosPorMes() async {
+    try {
+      final list = await _service.getEmprestimosPorMes();
+      return list.map((e) => EmprestimosPorDiaMesResponse.fromJson(e)).toList();
+    } catch (e) {
+      debugPrint('Erro ao recarregar empréstimos por mes: $e');
+      return [];
+    }
   }
 }

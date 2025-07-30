@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:provider/provider.dart';
@@ -58,45 +56,13 @@ class ProjectorLoanTable extends StatefulWidget {
 
 class _ProjectorLoanTableState extends State<ProjectorLoanTable>
     with AutomaticKeepAliveClientMixin {
-  WebSocketChannel? _channel;
   bool _isUpdating = false;
-  bool _initialDataLoaded = false;
 
   @override
   bool get wantKeepAlive => true;
 
   @override
-  void initState() {
-    super.initState();
-    _channel =
-        WebSocketChannel.connect(Uri.parse('ws://localhost:8000/newuso'));
-
-    // Configurar listener do WebSocket
-    _channel!.stream.listen((message) {
-      try {
-        final data = json.decode(message);
-        if (data is Map && data['codigo_equipamento'] != '') {
-          _handleWebSocketUpdate();
-        }
-      } catch (e) {
-        // Erro ao processar mensagem do WebSocket
-      }
-    });
-
-    // Carregar dados iniciais apenas uma vez
-    if (!_initialDataLoaded) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_initialDataLoaded) {
-          context.read<ProjectorProvider>().getUsos(page: 1, limit: 10);
-          _initialDataLoaded = true;
-        }
-      });
-    }
-  }
-
-  @override
   void dispose() {
-    _channel?.sink.close();
     super.dispose();
   }
 

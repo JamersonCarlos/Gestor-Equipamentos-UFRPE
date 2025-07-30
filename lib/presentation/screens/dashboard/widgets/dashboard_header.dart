@@ -12,13 +12,14 @@ class DashboardHeader extends StatefulWidget {
 class _DashboardHeaderState extends State<DashboardHeader> {
   @override
   Widget build(BuildContext context) {
-    final emprestimosDiaProvider = Provider.of<EmprestimosDiaProvider>(context);
+    final emprestimosDiaProvider = context.watch<EmprestimosDiaProvider>();
 
     return FutureBuilder(
       future: emprestimosDiaProvider.getDiaMaisAtivo(),
       builder: (context, snapshot) {
         final diaMaisAtivo = snapshot.data ?? '';
-        final professorMaisAtivo = emprestimosDiaProvider.getProfessorMaisAtivo();
+        final professorMaisAtivo =
+            emprestimosDiaProvider.getProfessorMaisAtivo();
         return Wrap(
           spacing: 18,
           runSpacing: 16,
