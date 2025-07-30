@@ -10,20 +10,29 @@ class UsoEquipamentoService {
   UsoEquipamentoService() : _baseUrl = '${Env.baseUrl}/uso-equipamento/';
 
   Future<Object> getUsos({int skip = 0, int limit = 100}) async {
-    final response = await http.get(
-      Uri.parse('$_baseUrl?skip=$skip&limit=$limit'),
-      headers: await getHeaders(),
-    );
+    try {
+      final headers = await getHeaders();
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonList = json.decode(response.body);
-      return {
-        'usos': jsonList['usos']
+      final response = await http.get(
+        Uri.parse('$_baseUrl?skip=$skip&limit=$limit'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonList = json.decode(response.body);
+        final usos = jsonList['usos']
             .map<UsoEquipamento>((json) => UsoEquipamento.fromJson(json))
-            .toList(),
-        'total': jsonList['total'],
-      };
-    } else {
+            .toList();
+        final total = jsonList['total'];
+
+        return {
+          'usos': usos,
+          'total': total,
+        };
+      } else {
+        return [];
+      }
+    } catch (e) {
       return [];
     }
   }
