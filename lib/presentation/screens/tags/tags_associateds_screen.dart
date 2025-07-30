@@ -118,7 +118,7 @@ class ListHeader extends StatelessWidget {
         children: [
           Expanded(
               flex: 4,
-              child: Text('Nome tag',
+              child: Text('Código Equipamento',
                   style: TextStyle(
                       color: Colors.grey, fontWeight: FontWeight.w500))),
           Expanded(

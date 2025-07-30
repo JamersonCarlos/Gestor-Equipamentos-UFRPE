@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_uso_projetores_ufrpe/core/constants/access_level.dart';
 import 'package:gestor_uso_projetores_ufrpe/domain/entities/rfid_tag.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/projector_provider.dart';
 import 'package:gestor_uso_projetores_ufrpe/presentation/providers/tags_provider.dart';
@@ -118,14 +117,6 @@ class _AddTagModalState extends State<AddTagModal> {
                 initialValue: tagId,
                 enabled: false,
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Nome'),
-                initialValue: '',
-                enabled: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Informe o nome' : null,
-                onSaved: (value) => label = value!,
-              ),
               DropdownButtonFormField<String>(
                 value: equipamentoCodigo,
                 decoration: const InputDecoration(labelText: 'Equipamento'),
@@ -158,7 +149,7 @@ class _AddTagModalState extends State<AddTagModal> {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
               final newTag = RfidTag(
-                nome: label,
+                nome: equipamentoCodigo!,
                 rfid: tagId,
                 nivelAcesso: 1,
                 status: 'ATIVO',
