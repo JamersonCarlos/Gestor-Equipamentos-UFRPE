@@ -1,0 +1,43 @@
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# Build outputs (serão gerados no container)
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Dependências (serão baixadas no container)
+.packages
+
+# Testes
+test/
+
+# Documentação
+README.md
+LICENSE
+
+# Docker
+Dockerfile
+docker-compose.yaml
+.dockerignore
+
+# Configurações locais
+.env
+.env.local
+
+# Cache
+.cache/
